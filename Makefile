@@ -4,5 +4,12 @@ solr-8.4.1:
 	tar -zxvf $@.tgz
 
 milosd:
-	cd milos
 	wget -r -l 1 https://www.nku.cz/scripts/rka/prehled-kontrol.asp?casovyfiltr=6
+
+# download all de audits
+# this probably does not work -- need to go one level deeper and to an
+# external website etc
+denku:
+	for i in `seq 1 28`; do wget -r -l 1 https://www.eurosai.org/en/databases/audits/index.html?page=$i'&filterLanguage16=on'; done
+
+
