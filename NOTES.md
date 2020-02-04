@@ -27,4 +27,7 @@ asi budu chtít používat nějaký metadata, to musim zjistit jak vybuduju data
 takový který obsahujou jak PDF tak metadata k němu ... 
 
 
+asi budu nakonec chtít zkonvertovat ty audity a jejich metadata do nějakejch
+JSOn nebo něco dokumentů a ty pak mít v tý kolekci...
+
 
