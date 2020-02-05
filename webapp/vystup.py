@@ -18,13 +18,21 @@ import requests
 
 LIMIT = 200
 
+print('''<style>
+em {font-weight: bold}
+</style>''')
+
 qs = parse_qs(os.environ['QUERY_STRING'])
 if 'q' in qs:
     q = qs['q'][0]
     print('Query:', q, end='<br>')
 
     url = 'http://sol2:8989/solr/techproducts/select'
-    data = {'q': q}
+    data = {'q': q,
+            'hl': 'true', # highlighting
+            'hl.fl' : 'content', # what to highlight
+            }
+    # highlighting->id->content[0] ... <em> highlights search query
     response = requests.get(url, data = data)
     #response.encoding='utf8'
     j = response.json()
@@ -35,7 +43,13 @@ if 'q' in qs:
     #print(j)
     print('Number of results found:', numFound, end='<br>')
     for i, doc in enumerate(docs):
-        print('Result', i+1, 'is document ID', doc['id'], end='<br>')
+        docid = doc['id']
+        print('<br>')
+        print('Result', i+1, 'is document ID', docid, end='<br>')
+        hl = j['highlighting'][docid]
+        if 'content' in hl:
+            for item in hl['content']:
+                print('...', item, '...', end='<br>')
         if 'content' in doc:
             sd = str(doc['content'])
         else:
