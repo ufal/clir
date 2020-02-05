@@ -8,9 +8,10 @@
 
 <h1>CLIR vstup</h1>
 
-<form action="test.py">
+<form action="vystup.py">
     Vyhledávací dotaz:
-    <input name="q" value="žluťoučký kůň">
+    <!--<input name="q" value="žluťoučký kůň">-->
+    <input name="q" value="foundation">
     <input type="submit" value="Vyhledat">
 </form>
 
