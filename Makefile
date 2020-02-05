@@ -22,6 +22,7 @@ kon-zavery:
 	wget http://ufallab.ms.mff.cuni.cz/~rosa/elitr/$@.zip
 	unzip $@.zip
 	for f in kon-zavery/*.pdf; do pdftotext $$f; done
+	mkdir kon-zavery-txt/
 	mv kon-zavery/*txt kon-zavery-txt/
 
 kon-zavery-details:

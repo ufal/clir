@@ -28,12 +28,60 @@ POSTing request to Config API: http://localhost:8989/solr/techproducts/config
 
 bin/post -p 8989 -c techproducts example/exampledocs/*
 
+bin/post -p 8989 -host sol2 -c techproducts example/exampledocs/*
+
 
 curl "http://localhost:8989/solr/techproducts/select?q=\"CAS+latency\""
 
 QUERY_STRING='q=foundation' python3 vystup.py
 
 sol2:8989 ... techproducts
+
+
+
+
+
+
+bin/solr create -c konzavery
+
+bin/post -p 8989 -c konzavery ../kon-zavery/*.pdf
+
+...to má nějakej problém
+(ale postnout to do ty předchozí kolekce jde, takže jen mam nějakej problém s
+vytvářenim tý nový kolůekce asi)
+
+
+SimplePostTool: WARNING: Solr returned an error #404 (Not Found) for url: http://localhost:8989/solr/konzavery/update/extract?resource.name=%2Flnet%2Fms%2Fprojects%2Felitr%2Fclir%2Fsolr-8.4.1%2F..%2Fkon-zavery%2FK99039.pdf&literal.id=%2Flnet%2Fms%2Fprojects%2Felitr%2Fclir%2Fsolr-8.4.1%2F..%2Fkon-zavery%2FK99039.pdf
+SimplePostTool: WARNING: Response: <html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<title>Error 404 Not Found</title>
+</head>
+<body><h2>HTTP ERROR 404</h2>
+<p>Problem accessing /solr/konzavery/update/extract. Reason:
+<pre>    Not Found</pre></p>
+</body>
+</html>
+SimplePostTool: WARNING: IOException while reading response: java.io.FileNotFoundException: http://localhost:8989/solr/konzavery/update/extract?resource.name=%2Flnet%2Fms%2Fprojects%2Felitr%2Fclir%2Fsolr-8.4.1%2F..%2Fkon-zavery%2FK99039.pdf&literal.id=%2Flnet%2Fms%2Fprojects%2Felitr%2Fclir%2Fsolr-8.4.1%2F..%2Fkon-zavery%2FK99039.pdf
+
+
+
+
+    bin/solr start 
+    bin/solr create -c files -d example/files/conf
+    bin/post -c files ~/Documents
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
