@@ -4,7 +4,8 @@ import sys
 import io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-print("Content-Type: text/plain;charset=utf-8")
+#print("Content-Type: text/plain;charset=utf-8")
+print("Content-Type: text/html;charset=utf-8")
 print("")
 
 from urllib.parse import parse_qs
@@ -15,12 +16,12 @@ import os
 import json
 import requests
 
-LIMIT = 100
+LIMIT = 200
 
 qs = parse_qs(os.environ['QUERY_STRING'])
 if 'q' in qs:
     q = qs['q'][0]
-    print('Query:', q)
+    print('Query:', q, end='<br>')
 
     url = 'http://sol2:8989/solr/techproducts/select'
     data = {'q': q}
@@ -32,17 +33,26 @@ if 'q' in qs:
     docs = j['response']['docs']
     
     #print(j)
-    print('Number of results found:', numFound)
+    print('Number of results found:', numFound, end='<br>')
     for i, doc in enumerate(docs):
-        print('Result', i+1, 'is document ID', doc['id'])
-        sd = str(doc)
-        if len(sd) <= LIMIT:
-            print(sd)
+        print('Result', i+1, 'is document ID', doc['id'], end='<br>')
+        if 'content' in doc:
+            sd = str(doc['content'])
         else:
-            print(sd[:LIMIT], '...')
+            sd = str(doc)
+        if len(sd) <= LIMIT:
+            print(sd, end='<br>')
+        else:
+            print(sd[:LIMIT], '...', end='<br>')
+
+    print('<hr>')
+    print('<pre>')
+    print(json.dumps(j, indent=4))
+    print('</pre>')
+    print('<hr>')
 
 else:
-    print('No query')
+    print('No query', end='<br>')
 
-print("Done.")
+print("Done.", end='<br>')
 
