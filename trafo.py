@@ -10,35 +10,51 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S',
     level=logging.INFO)
 
+def translate(url, data, headers):
+    logging.info('Sending request: ' + str(len(data["input_text"])) + ' characters')
+    response = requests.post(url, data = data, headers = headers)
+    logging.info('Got response ' + str(response.status_code) + ' ' + response.reason)
+    response.encoding='utf8'
+
+# how many characters max to send to translation
+# Lindat Translate has limit of 100 kB for input
+LIMIT=50000
+
 logging.info('Welcome to transformer!')
 
-if len(sys.argv) > 1:
-    logging.info('Input from ' + sys.argv[1])
-    infile = open(sys.argv[1], 'r')
-    text = infile.read()
-else:
-    logging.info('Input from STDIN')
-    text = sys.stdin.read()
+if len(sys.argv) < 4:
+    sys.exit('Usage: ./' + sys.argv[0] + ' infile srclang tgtlang > outfile')
 
-# you need to find out what the URL of the endpoint is
-url = 'http://lindat.mff.cuni.cz/services/translation/api/v2/models/en-cs'
+# TODO it would be nice to also support stdin, but I don't need that now
 
-# you need to find out what parameters the API expects
-#data = {"input_text": "I want to go for a beer today."}
-data = {"input_text": text}
+infilename, srclang, tgtlang = sys.argv[1:4]
+logging.info('Translate ' + infilename + ' from ' + srclang + ' to ' + tgtlang)
+infile = open(sys.argv[1], 'r')
+text = infile.read()
+infile.close()
+logging.info('File size is ' + str(len(text)) + ' characters')
 
-# sometimes, you may need to specify some headers (often not necessary)
+# URL of the endpoint
+url = 'http://lindat.mff.cuni.cz/services/translation/api/v2/models/' + srclang + '-' + tgtlang
 headers = {"accept": "text/plain"}
 
-# some APIs support `get`, some support `post`, some support both
-logging.info('Sending request: ' + str(len(text)) + ' characters')
-#logging.info('Sending request ' + str(data))
-response = requests.post(url, data = data, headers = headers)
-logging.info('Got response ' + str(response.status_code) + ' ' + response.reason)
-response.encoding='utf8'
+result = []
+ok = True
 
-if response.ok:
-    print(response.text)
+    data = {"input_text": text}
+    response = translate(url, data, headers)
+    if response.ok:
+        logging.info('All good, bye!')
+        return response.text
+    else:
+        logging.info('ERROR')
+        return ''
+
+if ok:
+    logging.info('Writing out the results.')
+    print(*result, sep='\n')
     logging.info('All good, bye!')
 else:
-    logging.info('ERROR')
+    logging.info('Not writing out any results because there was an error.')
+    logging.info('Sorry, bye!')
+

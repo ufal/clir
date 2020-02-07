@@ -146,12 +146,31 @@ calibre konvertor
 
 
 
+Postup:
+
+* najít web kde jdou stáhnout reporty
+* stáhnout seznamy reportů
+* profiltrovat reporty podle jazyka a podle roku
+* stáhnout PDFka, zachovat metadata pokud jsou (např. název)
+* calibre konverzí dostat text z PDF
+* přeložit do angličtiny a následně do dalších jazyků
+* nahrát do search tohletoho
 
 
 
+překlad: asi 100 slov za sekundu
 
+belgické audity: 20844263 slov, tj. 208442 sekund, tj. 2,5 dne
 
+1997 - 2012 converted by calibre, can translate
+start by 2012 and go back in time;
+once everything calibred, kill translation and translate new files
 
+maybe skip large files, at least for now?
 
+total now is 10M words
+500 files, 16 are > 100kW, 40 are > 50kW
+...let's only take those < 50kW,
+this leaves out 10% of the files but 50% of words
 
 
