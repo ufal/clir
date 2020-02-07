@@ -4,6 +4,9 @@ solr-8.4.1:
 	wget http://apache.miloslavbrada.cz/lucene/solr/8.4.1/$@.tgz
 	tar -zxvf $@.tgz
 
+ebook-convert:
+	sudo -v && wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
+
 milosd:
 	wget -r -l 1 https://www.nku.cz/scripts/rka/prehled-kontrol.asp?casovyfiltr=6
 
