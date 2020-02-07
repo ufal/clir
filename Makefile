@@ -29,3 +29,31 @@ kon-zavery-details:
 	mkdir $@
 	for d in www.nku.cz/scripts/rka/detail*; do p=$${d:44:7}; t=$${p/'%2F'/0}; cp "$$d" $@/K$$t.html; done
 
+wmt19-elitr-testsuite:
+	git clone git@github.com:ELITR/wmt19-elitr-testsuite.git
+
+data:
+	for d in cs de en ru fr; do for s in cs de en ru fr; do for n in cs de en ru fr; do mkdir -p data/data_$$d/source_$$s/nku_$$n;done;done;done
+
+NKU_BE=data/data_fr/source_fr/nku_be
+
+belgium-lists:
+	mkdir -p data/data_fr/source_fr/nku_be;
+	cd $(NKU_BE); for y in `seq 1997 2020`; do wget https://www.ccrek.be/EN/Publications/ChronologicalOrder.html?year=$$y -O list.$$y.html;done
+
+belgium-linklist:
+	cd $(NKU_BE); for y in `seq 1997 2020`; do \
+		sed -n '/ LIST/,/ \/LIST/p' list.$$y.html | grep -o '<a[^<]*French[^<]*</a>' > linklist.$$y.html; \
+		done
+
+belgium-csv:
+	cd $(NKU_BE); for y in `seq 1997 2020`; do \
+		sed -e 's/<a href="//' -e 's/" title="/\t/' -e 's/">.*//' linklist.$$y.html |grep pdf > linklist.$$y.csv; \
+		done
+
+belgium-files:
+	cd $(NKU_BE); for y in `seq 1997 2020`; do \
+		mkdir -p $$y; cut -f1 linklist.$$y.csv | wget -i - -P $$y; sleep 15 ; done
+
+
+
