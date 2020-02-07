@@ -21,11 +21,24 @@ kon-zavery.zip:
 kon-zavery:
 	wget http://ufallab.ms.mff.cuni.cz/~rosa/elitr/$@.zip
 	unzip $@.zip
+
+kon-zavery-txt-pdftottext:
 	for f in kon-zavery/*.pdf; do pdftotext $$f; done
-	mkdir kon-zavery-txt/
-	mv kon-zavery/*txt kon-zavery-txt/
+	mkdir $@
+	mv kon-zavery/*txt $@/
+
+kon-zavery-txt:
+	mkdir -p $@
+	for f in kon-zavery/*.pdf; do a=$${f%.pdf}; ebook-convert $$a.pdf $${a/kon-zavery/$@}.txt; done > log
+
+
+kon-zavery-txt-fillmissing:
+	for f in kon-zavery/*.pdf; do a=$${f%.pdf}; b=$${a/kon-zavery/kon-zavery-txt}; if [ ! -s $$b.txt ] ; then echo $$a; pdftottext $$a.pdf; mv $$a.txt $$b.txt; fi; done
 
 kon-zavery-details:
 	mkdir $@
 	for d in www.nku.cz/scripts/rka/detail*; do p=$${d:44:7}; t=$${p/'%2F'/0}; cp "$$d" $@/K$$t.html; done
+
+
+
 
