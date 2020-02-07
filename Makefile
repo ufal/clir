@@ -25,7 +25,7 @@ kon-zavery:
 	wget http://ufallab.ms.mff.cuni.cz/~rosa/elitr/$@.zip
 	unzip $@.zip
 
-kon-zavery-txt-pdftottext:
+kon-zavery-txt-pdftotext:
 	for f in kon-zavery/*.pdf; do pdftotext $$f; done
 	mkdir $@
 	mv kon-zavery/*txt $@/
@@ -36,7 +36,7 @@ kon-zavery-txt:
 
 
 kon-zavery-txt-fillmissing:
-	for f in kon-zavery/*.pdf; do a=$${f%.pdf}; b=$${a/kon-zavery/kon-zavery-txt}; if [ ! -s $$b.txt ] ; then echo $$a; pdftottext $$a.pdf; mv $$a.txt $$b.txt; fi; done
+	for f in kon-zavery/*.pdf; do a=$${f%.pdf}; b=$${a/kon-zavery/kon-zavery-txt}; if [ ! -s $$b.txt ] ; then echo $$a; pdftotext $$a.pdf; mv $$a.txt $$b.txt; fi; done
 
 kon-zavery-details:
 	mkdir $@
@@ -68,5 +68,7 @@ belgium-files:
 	cd $(NKU_BE); for y in `seq 1997 2020`; do \
 		mkdir -p $$y; cut -f1 linklist.$$y.csv | wget -i - -P $$y; sleep 15 ; done
 
-
+belgium-txt:
+	cd $(NKU_BE); for y in `seq 1997 2020`; do \
+		for f in $$y/*.pdf; do pdftotext $$f; done; done
 

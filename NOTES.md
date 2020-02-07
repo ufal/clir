@@ -113,3 +113,45 @@ asi budu nakonec chtít zkonvertovat ty audity a jejich metadata do nějakejch
 JSOn nebo něco dokumentů a ty pak mít v tý kolekci...
 
 
+
+
+
+
+
+
+
+
+
+
+TODO převést na txt je asi lepší přes calibre než přes pdftotext -- ale přes
+calibre to občas selže a je stejně potřeba pdftotext jako backup; teď pro
+jednoduchost jen pdftottext
+
+překlad má nějakej limit
+
+413 REQUEST ENTITY TOO LARGE:
+112629 characters
+
+OK:
+88186 characters
+
+There is a limitation on the size of the payload (file/request); this is
+currently 102400B
+
+asi má smysl tam pro jistotu cpát jen dokument menší než 50k znaků,
+a jak se tohle přešvihne tak to tzam poslat a další poslat později
+
+možná se to blbě přeloží když tam jsou řádky blbě, na to by byl lepší ten
+calibre konvertor
+
+
+
+
+
+
+
+
+
+
+
+
