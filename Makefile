@@ -32,7 +32,7 @@ kon-zavery-txt-pdftotext:
 
 kon-zavery-txt:
 	mkdir -p $@
-	for f in kon-zavery/*.pdf; do a=$${f%.pdf}; ebook-convert $$a.pdf $${a/kon-zavery/$@}.txt; done > log
+	for f in kon-zavery/*.pdf; do a=$${f%.pdf}; ebook-convert $$a.pdf $${a/kon-zavery/$@}.txt; done > calibre-conversion.log
 
 
 kon-zavery-txt-fillmissing:
@@ -71,4 +71,10 @@ belgium-files:
 belgium-txt:
 	cd $(NKU_BE); for y in `seq 1997 2020`; do \
 		for f in $$y/*.pdf; do pdftotext $$f; done; done
+
+belgium-txt-calibre:
+	cd $(NKU_BE); for y in `seq 1997 2020`; do \
+		for f in $$y/*.pdf; do ebook-convert $$f $${f/.pdf/.txt}; done; done > calibre-conversion.log
+
+
 
