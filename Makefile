@@ -4,6 +4,9 @@ solr-8.4.1:
 	wget http://apache.miloslavbrada.cz/lucene/solr/8.4.1/$@.tgz
 	tar -zxvf $@.tgz
 
+ebook-convert:
+	sudo -v && wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
+
 milosd:
 	wget -r -l 1 https://www.nku.cz/scripts/rka/prehled-kontrol.asp?casovyfiltr=6
 
@@ -21,9 +24,19 @@ kon-zavery.zip:
 kon-zavery:
 	wget http://ufallab.ms.mff.cuni.cz/~rosa/elitr/$@.zip
 	unzip $@.zip
+
+kon-zavery-txt-pdftottext:
 	for f in kon-zavery/*.pdf; do pdftotext $$f; done
-	mkdir kon-zavery-txt/
-	mv kon-zavery/*txt kon-zavery-txt/
+	mkdir $@
+	mv kon-zavery/*txt $@/
+
+kon-zavery-txt:
+	mkdir -p $@
+	for f in kon-zavery/*.pdf; do a=$${f%.pdf}; ebook-convert $$a.pdf $${a/kon-zavery/$@}.txt; done > log
+
+
+kon-zavery-txt-fillmissing:
+	for f in kon-zavery/*.pdf; do a=$${f%.pdf}; b=$${a/kon-zavery/kon-zavery-txt}; if [ ! -s $$b.txt ] ; then echo $$a; pdftottext $$a.pdf; mv $$a.txt $$b.txt; fi; done
 
 kon-zavery-details:
 	mkdir $@
