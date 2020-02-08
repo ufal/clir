@@ -86,17 +86,26 @@ class Result:
 
 
     def get_metadata(info):
-        return None
+        metadata = {}
+        try:
+            metafilename = info['srcdir'] + '/' + info['filename'] + '.meta'
+            with open(metafilename) as metafile:
+                metadata = json.load(metafile)
+                return metadata
+        except:
+            return None
 
 
     def show(self, C):
         print('<div class="result" id="' + self.docid + '">')
+        # document name
         if self.metadata:
             print(C.h2(self.metadata['name']))
         elif self.info:
             print(C.h2(self.info['filename']))
         else:
             print(C.h2(self.docid))
+        # search results highlight
         if self.hl:
             print(C.hl(self.hl))
         else:
@@ -104,28 +113,30 @@ class Result:
                 print(C.p(self.content))
             else:
                 print(C.p(self.content[:C.LIMIT] + '...'))
+        # document info
         if self.info:
-            print(C.details(str(self.info)))
+            print('<div>')
+            # translated file
             trtxt = C.URLPREFIX + self.info['datapath']
-            print(C.div(C.a(trtxt, C.t('Translation preview'))))
+            print(C.a(trtxt, C.t('Translation preview')))
+            print(' ({})'.format(C.t(self.info['lang'])))
+            print('&nbsp;&nbsp;&nbsp;')
+            # original file
             srcpdf = C.URLPREFIX + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
-            print(C.div(C.a(srcpdf, 'Original document')))
+            print(C.a(srcpdf, 'Original document'))
+            print(' ({})'.format(C.t(self.info['src'])))
+            # TODO pages words
+            print('&nbsp;&nbsp;&nbsp;')
+            # year and SAI
+            print('{}: {}, {}'.format(
+                C.t('Source'),
+                C.t('nku_' + self.info['nku']),
+                str(self.info['year'])
+                ))
+            print('</div>')
         print('</div>')
 
 class CLIR:
-
-    texts = {
-            'CLIR results': {'cs': 'výsledky CLIR',},
-            'Results for query': {'cs': 'Výsledky pro dotaz',},
-            'Number of results found': {'cs': 'Počet nalezených výsledků',},
-            'CLIR: no query was specified': {'cs': 'CLIR: nebyl zadán žádný dotaz',},
-            '': {'cs': '',},
-            '': {'cs': '',},
-            '': {'cs': '',},
-            
-            
-            }
-
     def __init__(self, language, url):
         self.language = language
         self.url = url
@@ -158,9 +169,9 @@ class CLIR:
 
     def tag(self, tag, text, cl=None):
         if cl:
-            return '<' + tag + ' class="' + cl + '">' + text + '</' + tag + '>'
+            return '<{} class="{}">{}</{}>'.format(tag, cl, text, tag)
         else:
-            return '<' + tag + '>' + text + '</' + tag + '>'
+            return '<{}>{}</{}>'.format(tag, text, tag)
 
     def h1(self, text):
         return self.tag('h1', text)
@@ -171,7 +182,7 @@ class CLIR:
     def a(self, link, text = None):
         if text == None:
             text = link
-        return '<a href="' + text + '" target="_blank">' + text + '</a>'
+        return '<a href="' + link + '" target="_blank">' + text + '</a>'
 
     def p(self, text):
         return self.tag('p', text)
@@ -199,4 +210,112 @@ class CLIR:
         for result in results.results:
             result.show(self)
 
+
+
+    # localization
+    texts = {
+            'CLIR results': {
+                'cs': 'výsledky CLIR',
+                },
+            'Results for query': {
+                'cs': 'Výsledky pro dotaz',
+                },
+            'Number of results found': {
+                'cs': 'Počet nalezených výsledků',
+                },
+            'CLIR: no query was specified': {
+                'cs': 'CLIR: nebyl zadán žádný dotaz',
+                },
+            'Translation preview': {
+                'cs': 'Náhled překladu',
+                },
+            'Original document': {
+                'cs': 'Původní dokument',
+                },
+            'nku_be': {
+                'cs': 'belgická SAI (Cour des comptes)',
+                'de': 'belgische SAI (Cour des comptes)',
+                'en': 'Belgian SAI (Cour des comptes)',
+                'fr': 'SAI belge (Cour des comptes)',
+                },
+            'nku_cs': {
+                'cs': 'česká SAI (Nejvyšší kontrolní úřad)',
+                'de': 'tschechische SAI (Nejvyšší kontrolní úřad)',
+                'en': 'Czech SAI (Nejvyšší kontrolní úřad)',
+                'fr': 'SAI tchèque (Nejvyšší kontrolní úřad)',
+                },
+            'nku_de': {
+                'cs': 'německá SAI (Bundesrechnungshof)',
+                'de': 'deutsche SAI (Bundesrechnungshof)',
+                'en': 'German SAI (Bundesrechnungshof)',
+                'fr': 'SAI allemand (Bundesrechnungshof)',
+                },
+            'nku_fr': {
+                'cs': 'francouzská SAI (Cour des Comptes)',
+                'de': 'französische SAI (Cour des Comptes)',
+                'en': 'French SAI (Cour des Comptes)',
+                'fr': 'SAI française (Cour des Comptes)',
+                },
+            'nku_ch': {
+                'cs': 'švýcarská SAI (Eidgenössische Finanzkontrolle)',
+                'de': 'schweizerische SAI (Eidgenössische Finanzkontrolle)',
+                'en': 'Swiss SAI (Eidgenössische Finanzkontrolle)',
+                'fr': 'SAI suisse (Eidgenössische Finanzkontrolle)',
+                },
+            'nku_ir': {
+                'cs': 'irská SAI (Office of the Comptroller and Auditor General)',
+                'de': 'irlansische SAI (Office of the Comptroller and Auditor General)',
+                'en': 'Irish SAI (Office of the Comptroller and Auditor General)',
+                'fr': 'SAI irlande (Office of the Comptroller and Auditor General)',
+                },
+            'nku_ru': {
+                'cs': 'ruská SAI (Accounts Chamber of Russian Federation)',
+                'de': 'russische SAI (Accounts Chamber of Russian Federation)',
+                'en': 'Russian SAI (Accounts Chamber of Russian Federation)',
+                'fr': 'SAI russe (Accounts Chamber of Russian Federation)',
+                },
+            'nku_uk': {
+                'cs': 'britská SAI (National Audit Office)',
+                'de': 'britische SAI (National Audit Office)',
+                'en': 'British SAI (National Audit Office)',
+                'fr': 'SAI britannique (National Audit Office)',
+                },
+            'cs': {
+                'cs': 'česky',
+                'de': 'tschechisch',
+                'en': 'Czech',
+                'fr': 'tchèque',
+                },
+            'de': {
+                'cs': 'německy',
+                'de': 'deutsch',
+                'en': 'German',
+                'fr': 'allemand',
+                },
+            'en': {
+                'cs': 'anglicky',
+                'de': 'englisch',
+                'en': 'English',
+                'fr': 'anglais',
+                },
+            'fr': {
+                'cs': 'francouzsky',
+                'de': 'französisch',
+                'en': 'French',
+                'fr': 'français',
+                },
+            'ru': {
+                'cs': 'rusky',
+                'de': 'russisch',
+                'en': 'Russian',
+                'fr': 'SAI russe',
+                },
+            'Source': {'cs': 'Zdroj',},
+            '': {'cs': '',},
+            '': {'cs': '',},
+            '': {'cs': '',},
+            '': {'cs': '',},
+            
+            
+            }
 

@@ -194,4 +194,8 @@ nku_be 2019: 1.5 MW, z toho 800 kW fajly < 50 kW
 TODO smazat pak prádzné fajly !! ALE OPATRNĚ !! radši nejdřív backup
 
 
+nku_be: data 2016-2020 (ostatní později) French English Czech German
+
+
+
 
