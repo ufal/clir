@@ -146,12 +146,52 @@ calibre konvertor
 
 
 
+Postup:
+
+* najít web kde jdou stáhnout reporty
+* stáhnout seznamy reportů
+* profiltrovat reporty podle jazyka a podle roku
+* stáhnout PDFka, zachovat metadata pokud jsou (např. název)
+* calibre konverzí dostat text z PDF
+* přeložit do angličtiny a následně do dalších jazyků
+* nahrát do search tohletoho
 
 
 
+překlad: asi 100 slov za sekundu
+
+belgické audity: 20844263 slov, tj. 208442 sekund, tj. 2,5 dne
+
+1997 - 2012 converted by calibre, can translate
+start by 2012 and go back in time;
+once everything calibred, kill translation and translate new files
+
+maybe skip large files, at least for now?
+
+total now is 10M words
+500 files, 16 are > 100kW, 40 are > 50kW
+...let's only take those < 50kW,
+this leaves out 10% of the files but 50% of words
 
 
+jeden z dotazů může bejt "bydlení"
+nebo "sloučení rodiny"
 
+
+překlad mi zachovává řádky, takže můžu snadno ukázat tentýž řádek z
+různejch jazykovejch verzí téhož fajlu
+...když ukazuju výsledek, tak to bych chtěl (pokud ideálně nějak zjistim odkud
+ten highlight je)
+...chtěl bych ideálně i synchronizované skrolování
+...na to určo něco bude, co ukáže čísla řádků a bude je to zobrazovat
+synchro a tak, to půjde nějak; minimálně by na to šlo použít HTML
+tables....
+
+
+nku_be 2019: 1.5 MW, z toho 800 kW fajly < 50 kW
+100 W / 1 s ... 800 kW za 8 000 s = 133 min
+
+TODO smazat pak prádzné fajly !! ALE OPATRNĚ !! radši nejdřív backup
 
 
 

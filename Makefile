@@ -46,7 +46,7 @@ wmt19-elitr-testsuite:
 	git clone git@github.com:ELITR/wmt19-elitr-testsuite.git
 
 data:
-	for d in cs de en ru fr; do for s in cs de en ru fr; do for n in cs de en ru fr; do mkdir -p data/data_$$d/source_$$s/nku_$$n;done;done;done
+	for d in cs de en fr; do for s in cs de en fr; do for n in cs de en fr; do mkdir -p data/data_$$d/source_$$s/nku_$$n;done;done;done
 
 NKU_BE=data/data_fr/source_fr/nku_be
 
