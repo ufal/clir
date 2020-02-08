@@ -106,9 +106,10 @@ class Result:
                 print(C.p(self.content[:C.LIMIT] + '...'))
         if self.info:
             print(C.details(str(self.info)))
-            print(C.div(C.a(C.URLPREFIX + self.info['datapath'])))
+            trtxt = C.URLPREFIX + self.info['datapath']
+            print(C.div(C.a(trtxt, C.t('Translation preview'))))
             srcpdf = C.URLPREFIX + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
-            print(C.div(C.a(srcpdf)))
+            print(C.div(C.a(srcpdf, 'Original document')))
         print('</div>')
 
 class CLIR:
