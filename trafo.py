@@ -20,7 +20,6 @@ def translate(url, data, headers):
 # how many characters max to send to translation
 # Lindat Translate has limit of 100 kB for input
 LIMIT=50000
-LIMIT=1000
 
 logging.info('Welcome to transformer!')
 
@@ -46,12 +45,35 @@ ok = True
 
 def trtext():
     global data, text, textlen, result, ok
-    data["input_text"] = ''.join(text)
-    #logging.info(str(text))
+    
     logging.info('Translating a batch of ' + str(len(text)) + ' lines')
+    
+    # !!! Transformer tends to eat up empty lines at the beginning
+    # so we need to keep them away and readd them later
+    # To be sure, let's do the same with empty lines at the end.
+    # Also it tends to add a newline to the end of the output, so we strip
+    # that (Since we remove final empties, we can simply rstrip the result.)
+    # I hope that empty lines inside the text are fine
+    # (it seems so from what I have seen)
+    initial_empties = 0
+    while text[initial_empties] == '':
+        initial_empties += 1
+    final_empties = 0
+    while text[-final_empties-1] == '':
+        final_empties += 1
+    stripped_text = text[initial_empties:len(text)-final_empties]
+    
+    data["input_text"] = '\n'.join(stripped_text)
     response = translate(url, data, headers)
-    if response.ok:
-        result.append(response.text)
+    if response.ok:       
+        # put back the initial empty lines
+        for _ in range(initial_empties):
+            result.append('')
+        # put there the translation
+        result.append(response.text.rstrip())
+        # put back the final empty lines
+        for _ in range(final_empties):
+            result.append('')
         text = []
         textlen = 0
         return True
@@ -61,20 +83,28 @@ def trtext():
 
 # translate large chunks
 for line in infile:
-    text.append(line)
-    textlen += len(line)
+    # we will handle newlines extra since Transformer mixes up empty lines
+    stripline = line.rstrip()
+    text.append(stripline)
+    textlen += len(stripline)
     if textlen > LIMIT:
         if not trtext():
             break
 # translate what remains
-if textlen > 0:
-    trtext()
+if len(text) > 0:
+    if textlen > 0:
+        # there are some non-empty lines
+        trtext()
+    else:
+        # there are just empty lines
+        result.extend(text)
 
-# TODO last chunk tends to contain an extra \n at the end, I don't know why
+# NOTE: if the input file does not end with a newline, the outputfile
+# will be one line longer, because we always want the output file to end
+# with a newline
 if ok:
     logging.info('Writing out the results.')
-    #logging.info(str(result))
-    print(*result, sep='', end='')  # \n already ends each chunk; this ensures lines will match
+    print(*result, sep='\n', end='\n')
     logging.info('All good, bye!')
 else:
     logging.info('Not writing out any results because there was an error.')
