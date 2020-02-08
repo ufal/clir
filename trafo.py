@@ -91,7 +91,7 @@ for line in infile:
         if not trtext():
             break
 # translate what remains
-if len(text) > 0:
+if ok and len(text) > 0:
     if textlen > 0:
         # there are some non-empty lines
         trtext()
