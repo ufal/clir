@@ -15,6 +15,7 @@ def translate(url, data, headers):
     response = requests.post(url, data = data, headers = headers)
     logging.info('Got response ' + str(response.status_code) + ' ' + response.reason)
     response.encoding='utf8'
+    return response
 
 # how many characters max to send to translation
 # Lindat Translate has limit of 100 kB for input
@@ -30,25 +31,30 @@ if len(sys.argv) < 4:
 infilename, srclang, tgtlang = sys.argv[1:4]
 logging.info('Translate ' + infilename + ' from ' + srclang + ' to ' + tgtlang)
 infile = open(sys.argv[1], 'r')
-text = infile.read()
-infile.close()
-logging.info('File size is ' + str(len(text)) + ' characters')
 
 # URL of the endpoint
 url = 'http://lindat.mff.cuni.cz/services/translation/api/v2/models/' + srclang + '-' + tgtlang
 headers = {"accept": "text/plain"}
 
+text = []
+textlen = 0
 result = []
 ok = True
+data = {}
 
-    data = {"input_text": text}
-    response = translate(url, data, headers)
-    if response.ok:
-        logging.info('All good, bye!')
-        return response.text
-    else:
-        logging.info('ERROR')
-        return ''
+for line in infile:
+    text.append(line)
+    textlen += len(line)
+    if textlen > LIMIT:
+        data["input_text"] = ''.join(text)
+        response = translate(url, data, headers)
+        if response.ok:
+            result.append(response.text)
+            text = []
+            textlen = 0
+        else:
+            ok = False
+            break
 
 if ok:
     logging.info('Writing out the results.')
@@ -58,3 +64,4 @@ else:
     logging.info('Not writing out any results because there was an error.')
     logging.info('Sorry, bye!')
 
+infile.close()
