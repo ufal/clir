@@ -1,12 +1,14 @@
 body, html {
     font-family: sans-serif;
     font-size: small;
+    background-color: #ccc;
 }
 .result {
     border: 1px solid black;
     margin: 1ex 1ex 1ex 1ex;
     padding: 1ex 1ex 1ex 1ex;
     border-radius: 10px;
+    background-color: #ccf
 }
 .result h2 {
     font-size: large;

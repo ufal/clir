@@ -25,33 +25,27 @@ class Results:
         print('</pre>')
         print('<hr>')
 
-class Result:
-    def __init__(self, doc, doc_hl):
-        self.doc = doc
-        if 'content' in doc:
-            self.content = doc['content'][0]
-        else:
-            self.content = str(doc)
-        if 'content' in doc_hl:
-            self.hl = doc_hl['content'][0]
-        else:
-            self.hl = None
-        self.docid = doc['id']
+class Document:
+    def __init__(self, docid):
+        self.docid = docid
         if '/data/' in self.docid:
-            # this hopefully means it is a document with our special ID # strucure
-            self.info = Result.parse_id(self.docid)
-            self.metadata = Result.get_metadata(self.info)
+            # this hopefully means it is a document with our special ID strucure
+            self.parse_id()     # fills in self.info
+            self.get_metadata()     # fills in self.metadata
         else:
             self.info = None
             self.metadata = None
 
-    def parse_id(docid):
+    def parse_id(self):
+        self.info = Document._parse_id(self.docid)
+    
+    def _parse_id(docid):
         # e.g. /data/data_cs/source_fr/nku_be/2020/2020_02_report.txt
         prefix = docid.find('/data/')
         assert prefix != -1
         
-        datapath = docid[prefix+1:]
-        parts = datapath.split('/', 6)
+        datapath = docid[prefix:]
+        parts = datapath[1:].split('/', 6)
         assert len(parts) == 6
         
         # data
@@ -85,7 +79,10 @@ class Result:
         return info
 
 
-    def get_metadata(info):
+    def get_metadata(self):
+        self.metadata = Document._get_metadata(self.info)
+
+    def _get_metadata(info):
         metadata = {}
         try:
             metafilename = info['srcdir'] + '/' + info['filename'] + '.meta'
@@ -95,19 +92,53 @@ class Result:
         except:
             return None
 
-
-    def show(self, C):
-        print('<div class="result" id="' + self.docid + '">')
-        # document name
+    def getname(self, lang='en'):
         name = self.docid
         if self.metadata:
-            lkey = 'name_' + C.language
+            lkey = 'name_' + lang
             if lkey in self.metadata:
                 name = self.metadata[lkey]
             else:
                 name = self.metadata['name']
         elif self.info:
             name = self.info['filename']
+        return name
+        
+
+class Result:
+    def __init__(self, doc, doc_hl):
+        self.doc = doc
+        if 'content' in doc:
+            self.content = doc['content'][0]
+        else:
+            self.content = str(doc)
+        if 'content' in doc_hl:
+            self.hl = doc_hl['content'][0]
+        else:
+            self.hl = None
+        self.docid = doc['id']
+
+        self.document = Document(self.docid)
+        self.info = self.document.info
+        self.metadata = self.document.metadata
+
+
+    # especially for Czech;
+    # 1 -> '',
+    # 2-4 -> 's2',
+    # >4 -> 's'
+    def pluralsuffix(number):
+        suffix = 's'
+        if number == 1:
+            suffix = ''
+        if 1 < number < 5:
+            suffix = 's2'
+        return suffix
+
+    def show(self, C):
+        print('<div class="result" id="' + self.docid + '">')
+        # document name
+        name = self.document.getname(C.language)
         print(C.h2(name))
         # search results highlight
         if self.hl:
@@ -120,23 +151,53 @@ class Result:
         # document info
         if self.info:
             print('<div>')
+            
+            previewurl = 'viewdoc.py?lang={}&amp;docid={}'.format(
+                    C.language, self.info['datapath'])
+            print(C.a(previewurl, C.t('Preview')))
+
+            # language and pages and words
+            print('&nbsp;&nbsp;&nbsp;')
+            if self.metadata:
+                print('{}, {} {}, {} {}'.format(
+                    C.t(self.info['src']),
+                    self.metadata['pages'],
+                    C.t('page' + Result.pluralsuffix(self.metadata['pages'])),
+                    self.metadata['words'],
+                    C.t('word' + Result.pluralsuffix(self.metadata['words'])),
+                    ))
+            else:
+                print(C.t(self.info['src']))
+                
             # translated file
-            trtxt = C.URLPREFIX + self.info['datapath']
-            print(C.a(trtxt, C.t('Translation preview')))
-            print(' ({})'.format(C.t(self.info['lang'])))
-            print('&nbsp;&nbsp;&nbsp;')
+            #trtxt = C.URLPREFIX + self.info['datapath']
+            #print(C.a(trtxt, C.t('Translation preview')))
+            #print(' ({})'.format(C.t(self.info['lang'])))
+            #print('&nbsp;&nbsp;&nbsp;')
+            
             # original file
-            srcpdf = C.URLPREFIX + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
-            print(C.a(srcpdf, C.t('Original document')))
-            print(' ({})'.format(C.t(self.info['src'])))
+            #srcpdf = C.URLPREFIX + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
+            #print(C.a(srcpdf, C.t('Original document')))
+            #print(' ({})'.format(C.t(self.info['src'])))
             # TODO pages words
-            print('&nbsp;&nbsp;&nbsp;')
+            #print('&nbsp;&nbsp;&nbsp;')
+            
             # year and SAI
+            print('&nbsp;&nbsp;&nbsp;')
             print('{}: {}, {}'.format(
                 C.t('Source'),
                 C.t('nku_' + self.info['nku']),
                 str(self.info['year'])
                 ))
+            
+            # original name
+            origname = self.document.getname(self.document.info['src'])
+            if origname != name:
+                print('&nbsp;&nbsp;&nbsp;')
+                print('{}: {}'.format(
+                    C.t('Original name'),
+                    origname))
+
             print('</div>')
         print('</div>')
 
@@ -230,6 +291,12 @@ class CLIR:
             'CLIR: no query was specified': {
                 'cs': 'CLIR: nebyl zadán žádný dotaz',
                 },
+            'CLIR: no document was specified': {
+                'cs': 'CLIR: nebyl zadán žádný dokument',
+                },
+            'CLIR: cannot display document': {
+                'cs': 'CLIR: dokument nelze zobrazit',
+                },
             'Translation preview': {
                 'cs': 'Náhled překladu',
                 },
@@ -315,6 +382,15 @@ class CLIR:
                 'fr': 'SAI russe',
                 },
             'Source': {'cs': 'Zdroj',},
+            'pages': {'cs': 'stránek',},
+            'words': {'cs': 'slov',},
+            'page': {'cs': 'stránka',},
+            'word': {'cs': 'slovo',},
+            'pages2': {'cs': 'stránky', 'en': 'pages'},
+            'words2': {'cs': 'slova', 'en': 'words'},
+            'Original name': {'cs': 'Původní název',},
+            'Preview': {'cs': 'Náhled',},
+            '': {'cs': '',},
             '': {'cs': '',},
             '': {'cs': '',},
             '': {'cs': '',},

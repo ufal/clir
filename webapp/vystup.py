@@ -24,7 +24,7 @@ if 'q' in qs:
     results = C.get_results(q)    
     print(C.p(C.t('Number of results found') + ': ' + str(results.numFound)))
     C.show_results(results)
-    results.debugprint()
+    # results.debugprint()
 else:
     C.print_header(title = C.t('CLIR: no query was specified'))
     print(C.h1(C.t('CLIR: no query was specified')))
