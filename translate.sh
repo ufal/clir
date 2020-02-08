@@ -20,12 +20,16 @@ mkdir -p $td
 for f in $d/*.txt;
 do
     echo >&2
-    if [ $(wc -w < $f) -lt $L ]
+    if [ -s $f ]
     then
-        echo Translate file $f: $(wc -w < $f) words, $(wc -l < $f) lines, $(wc -m < $f) characters >&2
-        ./trafo.py $f $s $t > ${f/data_$s/data_$t}
-    else
-        echo File $f too large: $(wc -w < $f) words, limit is $L words >&2
-    fi
+        if [ $(wc -w < $f) -lt $L ]
+        then
+            echo Translate file $f: $(wc -w < $f) words, $(wc -l < $f) lines, $(wc -m < $f) characters >&2
+            ./trafo.py $f $s $t > ${f/data_$s/data_$t}
+            echo Done: $(ls $td/*.txt | wc -l) / $(ls $d/*.txt | wc -l)
+        else
+            echo File $f too large: $(wc -w < $f) words, limit is $L words >&2
+        fi
+     fi
 done
 

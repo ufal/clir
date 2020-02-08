@@ -87,7 +87,7 @@ for line in infile:
     stripline = line.rstrip()
     text.append(stripline)
     textlen += len(stripline)
-    if textlen > LIMIT:
+    if textlen + len(text) > LIMIT:  # number of characters + number of lines
         if not trtext():
             break
 # translate what remains

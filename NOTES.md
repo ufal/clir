@@ -188,3 +188,7 @@ synchro a tak, to půjde nějak; minimálně by na to šlo použít HTML
 tables....
 
 
+nku_be 2019: 1.5 MW, z toho 800 kW fajly < 50 kW
+100 W / 1 s ... 800 kW za 8 000 s = 133 min
+
+
