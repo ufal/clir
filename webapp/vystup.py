@@ -14,13 +14,13 @@ qs = parse_qs(os.environ['QUERY_STRING']) if 'QUERY_STRING' in os.environ else {
 if 'q' in qs:
     q = qs['q'][0]
     C.print_header(title = q + ' - ' + C.t('CLIR results') )
-    C.print_h1(C.t('Results for query') + ' ' + q)
+    print(C.h1(C.t('Results for query') + ' ' + q))
     results = C.get_results(q)    
-    C.print_p(C.t('Number of results found') + ': ' + str(results.numFound))
+    print(C.p(C.t('Number of results found') + ': ' + str(results.numFound)))
     C.show_results(results)
     results.debugprint()
 else:
     C.print_header(title = C.t('CLIR: no query was specified'))
-    C.print_h1(C.t('CLIR: no query was specified'))
+    print(C.h1(C.t('CLIR: no query was specified')))
 
 C.print_footer()

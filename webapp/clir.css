@@ -1,5 +1,6 @@
 body, html {
     font-family: sans-serif;
+    font-size: small;
 }
 .result {
     border: 1px solid black;
@@ -12,7 +13,9 @@ body, html {
     margin: 0 0 0 0;
 }
 .result .hl {
-    font-size: small;
+    color: #333;
+}
+.result .details {
     color: #333;
 }
 .result .hl::before, .result .hl::after {

@@ -49,8 +49,11 @@ class Result:
         # e.g. /data/data_cs/source_fr/nku_be/2020/2020_02_report.txt
         prefix = docid.find('/data/')
         assert prefix != -1
-        parts = docid[prefix+1:].split('/', 6)
+        
+        datapath = docid[prefix+1:]
+        parts = datapath.split('/', 6)
         assert len(parts) == 6
+        
         # data
         assert parts[0] == 'data'
         info = {}
@@ -69,6 +72,16 @@ class Result:
         # 2020_02_report.txt
         assert parts[5].endswith('.txt')
         info['filename'] = parts[5][:-4]
+        
+        info['datapath'] = datapath
+        info['srcdir'] = '/'.join([
+            'data',
+            'data_' + info['src'],
+            'source_' + info['src'],
+            'nku_' + info['nku'],
+            str(info['year'])
+            ])
+        
         return info
 
 
@@ -79,18 +92,23 @@ class Result:
     def show(self, C):
         print('<div class="result" id="' + self.docid + '">')
         if self.metadata:
-            C.print_h2(self.metadata['name'])
+            print(C.h2(self.metadata['name']))
         elif self.info:
-            C.print_h2(self.info['filename'])
+            print(C.h2(self.info['filename']))
         else:
-            C.print_h2(self.docid)
+            print(C.h2(self.docid))
         if self.hl:
-            C.print_hl(self.hl)
+            print(C.hl(self.hl))
         else:
             if len(self.content) < C.LIMIT:
-                C.print_p(self.content)
+                print(C.p(self.content))
             else:
-                C.print_p(self.content[:C.LIMIT] + '...')
+                print(C.p(self.content[:C.LIMIT] + '...'))
+        if self.info:
+            print(C.details(str(self.info)))
+            print(C.div(C.a(C.URLPREFIX + self.info['datapath'])))
+            srcpdf = C.URLPREFIX + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
+            print(C.div(C.a(srcpdf)))
         print('</div>')
 
 class CLIR:
@@ -111,6 +129,7 @@ class CLIR:
         self.language = language
         self.url = url
         self.LIMIT = 200
+        self.URLPREFIX = 'http://ufallab.ms.mff.cuni.cz/~rosa/elitr/'
 
     def t(self, text):
         if text in CLIR.texts and self.language in CLIR.texts[text]:
@@ -136,17 +155,34 @@ class CLIR:
         </html>        
         ''')
 
-    def print_h1(self, text):
-        print('<h1>' + text + '</h1>')
+    def tag(self, tag, text, cl=None):
+        if cl:
+            return '<' + tag + ' class="' + cl + '">' + text + '</' + tag + '>'
+        else:
+            return '<' + tag + '>' + text + '</' + tag + '>'
 
-    def print_h2(self, text):
-        print('<h2>' + text + '</h2>')
+    def h1(self, text):
+        return self.tag('h1', text)
 
-    def print_p(self, text):
-        print('<p>' + text + '</p>')
+    def h2(self, text):
+        return self.tag('h2', text)
 
-    def print_hl(self, text):
-        print('<div class="hl">' + text + '</div>')
+    def a(self, link, text = None):
+        if text == None:
+            text = link
+        return '<a href="' + text + '" target="_blank">' + text + '</a>'
+
+    def p(self, text):
+        return self.tag('p', text)
+
+    def div(self, text):
+        return self.tag('div', text)
+
+    def hl(self, text):
+        return self.tag('div', text, 'hl')
+
+    def details(self, text):
+        return self.tag('div', text, 'details')
 
     def get_results(self, q):
         data = {'q': q,
