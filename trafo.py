@@ -20,6 +20,7 @@ def translate(url, data, headers):
 # how many characters max to send to translation
 # Lindat Translate has limit of 100 kB for input
 LIMIT=50000
+LIMIT=1000
 
 logging.info('Welcome to transformer!')
 
@@ -70,7 +71,7 @@ if textlen > 0:
 
 if ok:
     logging.info('Writing out the results.')
-    print(*result, sep='')  # \n already ends each chunk; this ensures lines will match
+    print(*result, sep='', end='')  # \n already ends each chunk; this ensures lines will match
     logging.info('All good, bye!')
 else:
     logging.info('Not writing out any results because there was an error.')
