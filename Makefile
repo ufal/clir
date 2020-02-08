@@ -72,6 +72,7 @@ belgium-txt:
 	cd $(NKU_BE); for y in `seq 1997 2020`; do \
 		for f in $$y/*.pdf; do pdftotext $$f; done; done
 
+# TODO skip large files
 belgium-txt-calibre:
 	cd $(NKU_BE); for y in `seq 1997 2020`; do \
 		for f in $$y/*.pdf; do ebook-convert $$f $${f/.pdf/.txt}; done; done > calibre-conversion.log
