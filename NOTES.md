@@ -175,6 +175,7 @@ this leaves out 10% of the files but 50% of words
 
 
 jeden z dotazů může bejt "bydlení"
+nebo "sloučení rodiny"
 
 
 překlad mi zachovává řádky, takže můžu snadno ukázat tentýž řádek z
