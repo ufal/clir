@@ -14,18 +14,18 @@ t=$3 # target language, e.g. en
 L=50000
 
 td=${d/data_$s/data_$t}
-echo Translate files in $d from $s to $t, store into $td
+echo Translate files in $d from $s to $t, store into $td >&2
 mkdir -p $td
 
 for f in $d/*.txt;
 do
-    echo
+    echo >&2
     if [ $(wc -w < $f) -lt $L ]
     then
-        echo Translate file $f: $(wc -w < $f) words
+        echo Translate file $f: $(wc -w < $f) words, $(wc -l < $f) lines, $(wc -m < $f) characters >&2
         ./trafo.py $f $s $t > ${f/data_$s/data_$t}
     else
-        echo File $f too large: $(wc -w < $f) words, limit is $L words
+        echo File $f too large: $(wc -w < $f) words, limit is $L words >&2
     fi
 done
 
