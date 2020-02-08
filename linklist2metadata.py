@@ -3,6 +3,9 @@
 
 import sys
 import json
+from trafo import translate
+
+# tuned for nku_be at the moment
 
 year = sys.argv[1]
 
@@ -19,9 +22,32 @@ with open('linklist.'+year+'.csv') as linklist:
         metadata = {
                 'url': url,
                 'name': name,
+                'name_en': name,
                 'pages': readnumfromfile(year + '/' + pdffilename + '.pages'),
                 'words': readnumfromfile(year + '/' + pdffilename + '.words'),
                 }
+        # translate name to other langs
+        if 'é' in name:
+            srclang = 'fr'
+            metadata['name_fr'] = name
+            tgtlang = 'en'
+            name_en = translate(name, srclang, tgtlang)
+            if name_en:
+                metadata['name_'+tgtlang] = name_en
+                name = name_en
+                srclang = 'en'
+                for tgtlang in ['cs', 'de']:
+                    name_tr = translate(name, srclang, tgtlang)
+                    if name_tr:
+                        metadata['name_'+tgtlang] = name_tr
+        else:
+            srclang = 'en'
+            for tgtlang in ['cs', 'de', 'fr']:
+                name_tr = translate(name, srclang, tgtlang)
+                if name_tr:
+                    metadata['name_'+tgtlang] = name_tr
+
+        # output
         with open(metafilename, 'w') as metafile:
             json.dump(metadata, metafile, indent=4)
 

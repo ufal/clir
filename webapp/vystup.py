@@ -8,9 +8,15 @@ from clir_functions import CLIR
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-C = CLIR(language = 'cs', url = 'http://sol2:8989/solr/techproducts/select')
-
 qs = parse_qs(os.environ['QUERY_STRING']) if 'QUERY_STRING' in os.environ else {}
+
+if 'lang' in qs:
+    lang = qs['lang'][0]
+else:
+    lang = 'en'
+
+C = CLIR(language = lang, url = 'http://sol2:8989/solr/techproducts/select')
+
 if 'q' in qs:
     q = qs['q'][0]
     C.print_header(title = q + ' - ' + C.t('CLIR results') )

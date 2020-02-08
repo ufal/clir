@@ -3,6 +3,7 @@
 
 import requests
 import sys
+import json
 
 import logging
 logging.basicConfig(
@@ -10,7 +11,17 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S',
     level=logging.INFO)
 
-def translate(url, data, headers):
+def translate(text, srclang, tgtlang):
+    url = 'http://lindat.mff.cuni.cz/services/translation/api/v2/models/' + srclang + '-' + tgtlang
+    headers = {"accept": "text/plain"}
+    data = {"input_text": text}
+    response = _translate(url, data, headers)
+    if response.ok:
+        return response.text.rstrip()
+    else:
+        return None
+
+def _translate(url, data, headers):
     logging.info('Sending request: ' + str(len(data["input_text"])) + ' characters')
     response = requests.post(url, data = data, headers = headers)
     logging.info('Got response ' + str(response.status_code) + ' ' + response.reason)
@@ -20,28 +31,6 @@ def translate(url, data, headers):
 # how many characters max to send to translation
 # Lindat Translate has limit of 100 kB for input
 LIMIT=50000
-
-logging.info('Welcome to transformer!')
-
-if len(sys.argv) < 4:
-    sys.exit('Usage: ./' + sys.argv[0] + ' infile srclang tgtlang > outfile')
-
-# TODO it would be nice to also support stdin, but I don't need that now
-
-infilename, srclang, tgtlang = sys.argv[1:4]
-logging.info('Translate ' + infilename + ' from ' + srclang + ' to ' + tgtlang)
-infile = open(infilename, 'r')
-
-# URL of the endpoint
-url = 'http://lindat.mff.cuni.cz/services/translation/api/v2/models/' + srclang + '-' + tgtlang
-headers = {"accept": "text/plain"}
-
-# translate each reasonably sized chunk (and then the last remaining chunk)
-data = {}
-text = []
-textlen = 0
-result = []
-ok = True
 
 def trtext():
     global data, text, textlen, result, ok
@@ -64,7 +53,7 @@ def trtext():
     stripped_text = text[initial_empties:len(text)-final_empties]
     
     data["input_text"] = '\n'.join(stripped_text)
-    response = translate(url, data, headers)
+    response = _translate(url, data, headers)
     if response.ok:       
         # put back the initial empty lines
         for _ in range(initial_empties):
@@ -81,33 +70,81 @@ def trtext():
         ok = False
         return False
 
-# translate large chunks
-for line in infile:
-    # we will handle newlines extra since Transformer mixes up empty lines
-    stripline = line.rstrip()
-    text.append(stripline)
-    textlen += len(stripline)
-    if textlen + len(text) > LIMIT:  # number of characters + number of lines
-        if not trtext():
-            break
-# translate what remains
-if ok and len(text) > 0:
-    if textlen > 0:
-        # there are some non-empty lines
-        trtext()
+if __name__ == '__main__':
+
+    logging.info('Welcome to transformer!')
+
+    if len(sys.argv) < 4:
+        sys.exit('Usage: ./' + sys.argv[0] + ' infile srclang tgtlang > outfile')
+
+    # TODO it would be nice to also support stdin, but I don't need that now
+
+    infilename, srclang, tgtlang = sys.argv[1:4]
+    logging.info('Translate ' + infilename + ' from ' + srclang + ' to ' + tgtlang)
+    infile = open(infilename, 'r')
+
+    # URL of the endpoint
+    url = 'http://lindat.mff.cuni.cz/services/translation/api/v2/models/' + srclang + '-' + tgtlang
+    headers = {"accept": "text/plain"}
+
+    # translate each reasonably sized chunk (and then the last remaining chunk)
+    data = {}
+    text = []
+    textlen = 0
+    result = []
+    ok = True
+
+    if infilename.endswith('.txt'):
+        # translate large chunks
+        for line in infile:
+            # we will handle newlines extra since Transformer mixes up empty lines
+            stripline = line.rstrip()
+            text.append(stripline)
+            textlen += len(stripline)
+            if textlen + len(text) > LIMIT:  # number of characters + number of lines
+                if not trtext():
+                    break
+        # translate what remains
+        if ok and len(text) > 0:
+            if textlen > 0:
+                # there are some non-empty lines
+                trtext()
+            else:
+                # there are just empty lines
+                result.extend(text)
+
+        # NOTE: if the input file does not end with a newline, the outputfile
+        # will be one line longer, because we always want the output file to end
+        # with a newline
+        if ok:
+            logging.info('Writing out the results.')
+            print(*result, sep='\n', end='\n')
+            logging.info('All good, bye!')
+        else:
+            logging.info('Not writing out any results because there was an error.')
+            logging.info('Sorry, bye!')
+    elif infilename.endswith('.meta') or infilename.endswith('.json'):
+        j = json.load(infile)
+        keys = list()
+        values = list()
+        for key, value in j.items():
+            keys.append(key)
+            values.append(value)
+        data["input_text"] = '\n'.join(values)
+        response = _translate(url, data, headers)
+        if response.ok:       
+            result = dict()
+            trvalues = response.text.rstrip().split('\n')
+            for key, value in zip(keys, trvalues):
+                result[key] = value
+            logging.info('Writing out the results.')
+            json.dump(result, sys.stdout, indent=4)
+            logging.info('All good, bye!')
+        else:
+            logging.info('Not writing out any results because there was an error.')
+            logging.info('Sorry, bye!')
     else:
-        # there are just empty lines
-        result.extend(text)
+        logging.info('Cannot translate this file type. Supported types: txt, json')
+        logging.info('Sorry, bye!')
 
-# NOTE: if the input file does not end with a newline, the outputfile
-# will be one line longer, because we always want the output file to end
-# with a newline
-if ok:
-    logging.info('Writing out the results.')
-    print(*result, sep='\n', end='\n')
-    logging.info('All good, bye!')
-else:
-    logging.info('Not writing out any results because there was an error.')
-    logging.info('Sorry, bye!')
-
-infile.close()
+    infile.close()

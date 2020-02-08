@@ -11,7 +11,11 @@
 <form action="vystup.py">
     Vyhledávací dotaz:
     <!--<input name="q" value="žluťoučký kůň">-->
-    <input name="q" value="foundation">
+    <input name="q" value="foundation"><br>
+    <input type="radio" name="lang" value='cs' checked>Czech<br>
+    <input type="radio" name="lang" value='en'>English<br>
+    <input type="radio" name="lang" value='de'>German<br>
+    <input type="radio" name="lang" value='fr'>French<br>
     <input type="submit" value="Vyhledat">
 </form>
 

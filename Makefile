@@ -50,6 +50,10 @@ data:
 
 NKU_BE=data/data_fr/source_fr/nku_be
 
+# french metadata:
+# https://www.ccrek.be/FR/Publications/ApercuChronologique.html?year=2014
+# Not clear if the listing of documents is the same or different...
+
 belgium-lists:
 	mkdir -p data/data_fr/source_fr/nku_be;
 	cd $(NKU_BE); for y in `seq 1997 2020`; do wget https://www.ccrek.be/EN/Publications/ChronologicalOrder.html?year=$$y -O list.$$y.html;done
@@ -77,5 +81,7 @@ belgium-txt-calibre:
 	cd $(NKU_BE); for y in `seq 1997 2020`; do \
 		for f in $$y/*.pdf; do ebook-convert $$f $${f/.pdf/.txt}; done; done > calibre-conversion.log
 
-
+belgium-metadata:
+	cd $(NKU_BE); for y in `seq 1997 2020`; do \
+	../../../../metadata.sh $$y; done
 

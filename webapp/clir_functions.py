@@ -99,12 +99,16 @@ class Result:
     def show(self, C):
         print('<div class="result" id="' + self.docid + '">')
         # document name
+        name = self.docid
         if self.metadata:
-            print(C.h2(self.metadata['name']))
+            lkey = 'name_' + C.language
+            if lkey in self.metadata:
+                name = self.metadata[lkey]
+            else:
+                name = self.metadata['name']
         elif self.info:
-            print(C.h2(self.info['filename']))
-        else:
-            print(C.h2(self.docid))
+            name = self.info['filename']
+        print(C.h2(name))
         # search results highlight
         if self.hl:
             print(C.hl(self.hl))
@@ -123,7 +127,7 @@ class Result:
             print('&nbsp;&nbsp;&nbsp;')
             # original file
             srcpdf = C.URLPREFIX + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
-            print(C.a(srcpdf, 'Original document'))
+            print(C.a(srcpdf, C.t('Original document')))
             print(' ({})'.format(C.t(self.info['src'])))
             # TODO pages words
             print('&nbsp;&nbsp;&nbsp;')
