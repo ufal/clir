@@ -26,7 +26,7 @@ do
         then
             echo Translate file $f: $(wc -w < $f) words, $(wc -l < $f) lines, $(wc -m < $f) characters >&2
             ./trafo.py $f $s $t > ${f/data_$s/data_$t}
-            echo Done: $(ls $td/*.txt | wc -l) / $(ls $d/*.txt | wc -l)
+            echo Done: $(ls $td/*.txt | wc -l) / $(ls $d/*.txt | wc -l) >&2
         else
             echo File $f too large: $(wc -w < $f) words, limit is $L words >&2
         fi
