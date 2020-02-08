@@ -47,6 +47,7 @@ ok = True
 def trtext():
     global data, text, textlen, result, ok
     data["input_text"] = ''.join(text)
+    #logging.info(str(text))
     logging.info('Translating a batch of ' + str(len(text)) + ' lines')
     response = translate(url, data, headers)
     if response.ok:
@@ -69,8 +70,10 @@ for line in infile:
 if textlen > 0:
     trtext()
 
+# TODO last chunk tends to contain an extra \n at the end, I don't know why
 if ok:
     logging.info('Writing out the results.')
+    #logging.info(str(result))
     print(*result, sep='', end='')  # \n already ends each chunk; this ensures lines will match
     logging.info('All good, bye!')
 else:
