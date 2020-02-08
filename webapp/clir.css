@@ -1,0 +1,24 @@
+body, html {
+    font-family: sans-serif;
+}
+.result {
+    border: 1px solid black;
+    margin: 1ex 1ex 1ex 1ex;
+    padding: 1ex 1ex 1ex 1ex;
+    border-radius: 10px;
+}
+.result h2 {
+    font-size: large;
+    margin: 0 0 0 0;
+}
+.result .hl {
+    font-size: small;
+    color: #333;
+}
+.result .hl::before, .result .hl::after {
+    content: "...";
+}
+.result .hl em {
+    font-weight: bold;
+}
+
