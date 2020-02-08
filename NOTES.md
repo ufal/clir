@@ -174,3 +174,16 @@ total now is 10M words
 this leaves out 10% of the files but 50% of words
 
 
+jeden z dotazů může bejt "bydlení"
+
+
+překlad mi zachovává řádky, takže můžu snadno ukázat tentýž řádek z
+různejch jazykovejch verzí téhož fajlu
+...když ukazuju výsledek, tak to bych chtěl (pokud ideálně nějak zjistim odkud
+ten highlight je)
+...chtěl bych ideálně i synchronizované skrolování
+...na to určo něco bude, co ukáže čísla řádků a bude je to zobrazovat
+synchro a tak, to půjde nějak; minimálně by na to šlo použít HTML
+tables....
+
+

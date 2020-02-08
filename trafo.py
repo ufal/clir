@@ -30,35 +30,47 @@ if len(sys.argv) < 4:
 
 infilename, srclang, tgtlang = sys.argv[1:4]
 logging.info('Translate ' + infilename + ' from ' + srclang + ' to ' + tgtlang)
-infile = open(sys.argv[1], 'r')
+infile = open(infilename, 'r')
 
 # URL of the endpoint
 url = 'http://lindat.mff.cuni.cz/services/translation/api/v2/models/' + srclang + '-' + tgtlang
 headers = {"accept": "text/plain"}
 
+# translate each reasonably sized chunk (and then the last remaining chunk)
+data = {}
 text = []
 textlen = 0
 result = []
 ok = True
-data = {}
 
+def trtext():
+    global data, text, textlen, result, ok
+    data["input_text"] = ''.join(text)
+    logging.info('Translating a batch of ' + str(len(text)) + ' lines')
+    response = translate(url, data, headers)
+    if response.ok:
+        result.append(response.text)
+        text = []
+        textlen = 0
+        return True
+    else:
+        ok = False
+        return False
+
+# translate large chunks
 for line in infile:
     text.append(line)
     textlen += len(line)
     if textlen > LIMIT:
-        data["input_text"] = ''.join(text)
-        response = translate(url, data, headers)
-        if response.ok:
-            result.append(response.text)
-            text = []
-            textlen = 0
-        else:
-            ok = False
+        if not trtext():
             break
+# translate what remains
+if textlen > 0:
+    trtext()
 
 if ok:
     logging.info('Writing out the results.')
-    print(*result, sep='\n')
+    print(*result, sep='')  # \n already ends each chunk; this ensures lines will match
     logging.info('All good, bye!')
 else:
     logging.info('Not writing out any results because there was an error.')
