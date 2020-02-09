@@ -99,4 +99,8 @@ hr {clear: both}
     text-align: justify;
 }
 
+.highlight {
+    background-color: #ff0;
+    padding: 0 2px 0 2px;
+}
 

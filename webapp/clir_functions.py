@@ -121,9 +121,14 @@ class Document:
     def get_source_pdf(self, urlprefix = ''):
         return urlprefix + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
 
-    def show_parallel(self, C):
+
+    def show_parallel(self, C, query = None):
         trfilename  = '.' + self.info['datapath']
         srcfilename = '.' + self.get_source_txt()
+        if query:
+            query = query.split()
+        else:
+            query = []
         try:
             with open(trfilename, encoding='utf8') as trfile, open(srcfilename, encoding='utf8') as srcfile:
                 print('<table class="paratable">')
@@ -133,12 +138,13 @@ class Document:
                     <th class="right">{}</th>
                     </tr>
                     </thead>'''.format(
-                    C.t('Translation'), C.t('Original')))
+                    C.t('Automatic translation'), C.t('Original text')))
                 print('<tbody>')
                 for trline, srcline in zip(trfile, srcfile):
                     if trline != '\n' and srcline != '\n':
                         print('<tr><td>{}</td><td>{}</td></tr>'.format(
-                            trline, srcline))
+                            C.highlight(trline, query),
+                            srcline))
                 print('</tbody>')
                 print('</table>')
         except:
@@ -265,6 +271,12 @@ class CLIR:
         else:
             return text
 
+    # TODO should be more clever, at least lc
+    def highlight(self, text, words):
+        for word in words:
+            text = text.replace(word, self.tag('span', word, 'highlight'))
+        return text
+    
     def print_header(self, title='CLIR', nobody=False):
         print('''Content-Type: text/html;charset=utf-8
 

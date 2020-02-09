@@ -221,4 +221,11 @@ možnosti:
     bin/post -p 8971 -c eurosaiall ../data/data_cs/source_fr/nku_be/????/*txt
 
 
+TODO: stránkování výsledků (anebo rovnou zobrazovat všechny)
+
+TODO: návrty na předchozí stránky
+
+TODO: rozdělit podle jazyka vyhledávání
+
+
 

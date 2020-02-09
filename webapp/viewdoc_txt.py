@@ -16,6 +16,11 @@ if 'lang' in qs:
 else:
     lang = 'en'
 
+if 'q' in qs:
+    q = qs['q'][0]
+else:
+    q = None
+
 C = CLIR(language = lang, url = 'http://sol2:8989/solr/techproducts/select')
 
 if 'docid' in qs:
@@ -26,7 +31,7 @@ if 'docid' in qs:
         name = document.getname(lang)
         C.print_header(title = name, nobody=True)
         print('<body>')
-        document.show_parallel(C)
+        document.show_parallel(C, q)
         print('</body></html>')
     else:
         # TODO this may be too harsh; even if we don't have metadata, we might

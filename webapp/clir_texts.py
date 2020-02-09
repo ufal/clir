@@ -120,8 +120,8 @@ class CLIRtexts:
             'Preview': {'cs': 'Náhled',},
             'Search query': {'cs': 'Vyhledávací dotaz',},
             'Search': {'cs': 'Vyhledat',},
-            '': {'cs': '',},
-            '': {'cs': '',},
+            'Original text': {'cs': 'Původní text',},
+            'Automatic translation': {'cs': 'Automatický překlad',},
             '': {'cs': '',},
             
             
