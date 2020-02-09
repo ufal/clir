@@ -6,30 +6,48 @@ class CLIRtexts:
     texts = {
             'CLIR results': {
                 'cs': 'výsledky CLIR',
+                'de': 'CLIR Resultate',
+                'fr': 'résultats CLIR',
                 },
             'Results for query': {
                 'cs': 'Výsledky pro dotaz',
+                'de': 'Resultate für die Suchanfrage',
+                'fr': 'résultats pour la requête',
                 },
             'Highlighted for query': {
                 'cs': 'Zvýrazněno pro dotaz',
+                'de': 'hervorgehoben für die Suchanfrage',
+                'fr': 'surligné pour la requête',
                 },
             'Number of results found': {
                 'cs': 'Počet nalezených výsledků',
+                'de': 'Anzahl den gefundenen Resultaten',
+                'fr': 'nombre des résultats trouvés',
                 },
             'CLIR: no query was specified': {
                 'cs': 'CLIR: nebyl zadán žádný dotaz',
+                'de': 'CLIR: keine Suchanfrage angegeben',
+                'fr': 'CLIR: aucune requête n\'a été spécifée',
                 },
             'CLIR: no document was specified': {
                 'cs': 'CLIR: nebyl zadán žádný dokument',
+                'de': 'CLIR: kein Dokument angegeben',
+                'fr': 'CLIR: aucun document n\'a été spécifié',
                 },
             'CLIR: cannot display document': {
                 'cs': 'CLIR: dokument nelze zobrazit',
+                'de': 'CLIR: das Dokument kann nicht gezeigt werden',
+                'fr': 'CLIR: le document ne peut pasêtre affiché',
                 },
             'Translation preview': {
                 'cs': 'Náhled překladu',
+                'de': 'Vorschau der Übersetzung',
+                'fr': 'Prévue de la traduction',
                 },
             'Original document': {
                 'cs': 'Původní dokument',
+                'de': 'Originales Dokument',
+                'fr': 'Document original',
                 },
             'nku_be': {
                 'cs': 'belgická SAI (Cour des comptes)',
@@ -109,21 +127,81 @@ class CLIRtexts:
                 'en': 'Russian',
                 'fr': 'SAI russe',
                 },
-            'Source': {'cs': 'Zdroj',},
-            'pages': {'cs': 'stránek',},
-            'words': {'cs': 'slov',},
-            'page': {'cs': 'stránka',},
-            'word': {'cs': 'slovo',},
-            'pages2': {'cs': 'stránky', 'en': 'pages'},
-            'words2': {'cs': 'slova', 'en': 'words'},
-            'Original name': {'cs': 'Původní název',},
-            'Preview': {'cs': 'Náhled',},
-            'Search query': {'cs': 'Vyhledávací dotaz',},
-            'Search': {'cs': 'Vyhledat',},
-            'Original text': {'cs': 'Původní text',},
-            'Automatic translation': {'cs': 'Automatický překlad',},
-            '': {'cs': '',},
+            'Source': {
+                'cs': 'Zdroj',
+                'de': 'Quelle',
+                'fr': 'Source',
+                },
+            'pages': {
+                'cs': 'stránek',
+                'de': 'Seiten',
+                'fr': 'pages',
+                },
+            'words': {
+                'cs': 'slov',
+                'de': 'Wörter',
+                'fr': 'mots',
+                },
+            'page': {
+                'cs': 'stránka',
+                'de': 'Seite',
+                'fr': 'page',
+                },
+            'word': {
+                'cs': 'slovo',
+                'de': 'Wort',
+                'fr': 'mot',
+                },
+            'pages2': {
+                'cs': 'stránky',
+                'en': 'pages',
+                'de': 'Seiten',
+                'fr': 'pages',
+                },
+            'words2': {
+                'cs': 'slova',
+                'en': 'words',
+                'de': 'Wörter',
+                'fr': 'mots',
+                },
+            'Original name': {
+                'cs': 'Původní název',
+                'de': 'Originale Name',
+                'fr': 'Nom originale',
+                },
+            'Preview': {
+                'cs': 'Náhled',
+                'de': 'Vorschau',
+                'fr': 'Prévue',
+                },
+            'Search query': {
+                'cs': 'Vyhledávací dotaz',
+                'de': 'Suchanfrage',
+                'fr': 'Requête',
+                },
+            'Search': {
+                'cs': 'Vyhledat',
+                'de': 'Suchen',
+                'fr': 'Chercher',
+                },
+            'Original text': {
+                'cs': 'Původní text',
+                'de': 'Originales Text',
+                'fr': 'Texte original',
+                },
+            'Automatic translation': {
+                'cs': 'Automatický překlad',
+                'de': 'Automatische Übersetzung',
+                'fr': 'Traduction automatique',
+                },
+            '': {
+                    'cs': '',
+                    'de': '',
+                    'fr': '',
+                    
+                },
             
             
-            }
+            
+                }
 
