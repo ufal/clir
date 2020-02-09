@@ -46,11 +46,14 @@ p.header {
     font-family: serif;
     margin-left: 3ex;
 }
-.result .hl::before {
-    content: '"...';
+.bqh::before {
+    content: '"…';
 }
-.result .hl::after {
-    content: '..."';
+.bq::before, .aq::after {
+    content: '"';
+}
+.ahq::after {
+    content: '…"';
 }
 .result .hl em {
     font-weight: bold;

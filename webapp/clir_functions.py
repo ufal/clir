@@ -5,6 +5,8 @@ import requests
 import json
 from clir_texts import CLIRtexts
 import sys
+lstripchars = '!"“#$%&\'’)*+,-–./:;=?@[\\]^_`{|}~ \t\n\r\x0b\x0c'
+rstripchars = '!"„#$%&\'’(*+,-–./:;=?@[\\]^_`{|}~ \t\n\r\x0b\x0c'
 
 import logging
 #logging.basicConfig(
@@ -159,7 +161,7 @@ class Result:
         else:
             self.content = str(doc)
         if 'content' in doc_hl:
-            self.hl = doc_hl['content'][0].strip()
+            self.hl = doc_hl['content'][0]
         else:
             self.hl = None
         self.docid = doc['id']
@@ -221,16 +223,10 @@ class Result:
             print(C.h2(C.a(previewurl, name)))
         else:
             print(C.h2(name))
-        
+
         # search results highlight
-        if self.hl:
-            print(C.hl(self.hl))
-        else:
-            if len(self.content) < C.LIMIT:
-                print(C.p(self.content))
-            else:
-                print(C.p(self.content[:C.LIMIT] + '...'))
-        
+        print(self.hldiv(C))
+    
         # document info
         if self.info:
             print('<div>')
@@ -246,7 +242,28 @@ class Result:
         
         print('</div>')  # end result box
 
-
+    # search results highlight
+    def hldiv(self, C):
+        hltext = ''
+        if self.hl:
+            hltext = self.hl
+            hlclasses = 'bqh hl ahq' # before quote hellip, highlight, after hellip quote
+            hltext = hltext.lstrip(lstripchars)
+            hltext = hltext.rstrip(rstripchars)
+        else:
+            if len(self.content) < C.LIMIT:
+                hltext = self.content
+                hlclasses = 'bq hl aq' # before quote, highlight, after quote
+                hltext = hltext.strip()
+            else:
+                hltext = self.content[:C.LIMIT]
+                last_space = hltext.rfind(' ')
+                hltext = hltext[:last_space] # break at word boundary
+                hltext = hltext.lstrip()
+                hltext = hltext.rstrip(rstripchars)
+                hlclasses = 'bq hl ahq' # before quote, highlight, after hellip quote
+        
+        return C.tag('div', hltext, hlclasses)
         
 class CLIR:
     def __init__(self,
@@ -262,7 +279,7 @@ class CLIR:
         self.host = host
         self.port = port
         self.collection = collection
-        self.LIMIT = 200
+        self.LIMIT = 150
         self.URLPREFIX = 'http://ufallab.ms.mff.cuni.cz/~rosa/elitr/'
 
     def t(self, text):
@@ -353,10 +370,6 @@ class CLIR:
     def span(self, text, cl=None):
         return self.tag('span', text, cl)
 
-    def hl(self, text):
-        #return self.tag('div', self.tag('q', text), 'hl')
-        return self.tag('div', text, 'hl')
-
     def details(self, text):
         return self.tag('div', text, 'details')
 
@@ -367,6 +380,7 @@ class CLIR:
         data = {'q': q,
                 'hl': 'true', # highlighting
                 'hl.fl' : 'content', # what to highlight
+                'rows': 100,
                 }
         # highlighting->id->content[0] ... <em> highlights search query
         response = requests.get(self.url, data = data)

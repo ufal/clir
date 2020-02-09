@@ -246,3 +246,18 @@ TODO: vstupní stránky
 TODO: highligh case insensitive
 
 
+## solr search
+
+q: query
+
+hl, hl,fl: highlighting
+
+fl=id: only return ids of documents, not whole contents (but still can return
+hightlights)
+...this might be more efficient for large documents where I only display the
+beginning anyway...
+
+rows = how many results to display
+
+
+
