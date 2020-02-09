@@ -42,6 +42,26 @@ kon-zavery-details:
 	mkdir $@
 	for d in www.nku.cz/scripts/rka/detail*; do p=$${d:44:7}; t=$${p/'%2F'/0}; cp "$$d" $@/K$$t.html; done
 
+
+
+#cd kon-zavery-txt; for f in K[01]*.txt; do p=$${f/.txt/.pdf}; y=20$${f:1:2};
+
+NKU_CS=data/data_cs/source_cs/nku_cs
+# 1993 .. 2019
+nku_cs:
+	for y in `seq 93 99`; do \
+		d=$(NKU_CS)/19$$y; mkdir -p $$d; \
+		cp kon-zavery/K$$y*.pdf $$d; cp kon-zavery-txt/K$$y*.txt $$d; done;
+	for y in `seq 0 9`; do \
+		d=$(NKU_CS)/200$$y; mkdir -p $$d; \
+		cp kon-zavery/K0$$y*.pdf $$d; cp kon-zavery-txt/K0$$y*.txt $$d; done; 
+	for y in `seq 10 19`; do \
+		d=$(NKU_CS)/20$$y; mkdir -p $$d; \
+		cp kon-zavery/K$$y*.pdf $$d; cp kon-zavery-txt/K$$y*.txt $$d; done;
+
+	
+
+
 wmt19-elitr-testsuite:
 	git clone git@github.com:ELITR/wmt19-elitr-testsuite.git
 
