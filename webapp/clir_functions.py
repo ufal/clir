@@ -6,6 +6,9 @@ import json
 import re
 from clir_texts import CLIRtexts
 import sys
+
+import locale
+
 lstripchars = '!"“#$%&\'’)*+,-–./:;=?@[\\]^_`{|}~ \t\n\r\x0b\x0c'
 rstripchars = '!"„#$%&\'’(*+,-–./:;=?@[\\]^_`{|}~ \t\n\r\x0b\x0c'
 
@@ -203,7 +206,7 @@ class Result:
                     C.t('page' + Result.pluralsuffix(self.metadata['pages'])),
                 )
             if self.metadata and 'words' in self.metadata:
-                info_lang_p_w = '{}, {:,} {}'.format(
+                info_lang_p_w = '{}, {:n} {}'.format(
                     info_lang_p_w,
                     self.metadata['words'],
                     C.t('word' + Result.pluralsuffix(self.metadata['words'])),
@@ -269,6 +272,13 @@ class Result:
         
         return C.tag('div', hltext, hlclasses)
         
+lang2locale = {
+    'cs': 'cs_CZ.UTF-8',
+#    'de': 'de_DE.UTF-8',
+    'en': 'en_US.UTF-8',
+#    'fr': 'fr_FR.UTF-8',
+}
+
 class CLIR:
     def __init__(self,
             language = 'en', url = None,
@@ -285,6 +295,12 @@ class CLIR:
         self.collection = collection
         self.LIMIT = 150
         self.URLPREFIX = 'http://ufallab.ms.mff.cuni.cz/~rosa/elitr/'
+
+        if language in lang2locale:
+            locale.setlocale(locale.LC_ALL, lang2locale[language])
+        else:
+            locale.setlocale(locale.LC_ALL, lang2locale['en'])
+
 
     def t(self, text):
         if text in CLIRtexts.texts and self.language in CLIRtexts.texts[text]:
