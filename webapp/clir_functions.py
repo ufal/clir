@@ -344,8 +344,8 @@ class CLIR:
             text = link
         return '<a href="' + link + '" target="_blank">' + text + '</a>'
 
-    def p(self, text):
-        return self.tag('p', text)
+    def p(self, text, cl=None):
+        return self.tag('p', text, cl)
 
     def div(self, text, cl=None):
         return self.tag('div', text, cl)

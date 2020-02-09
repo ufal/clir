@@ -28,7 +28,7 @@ if 'docid' in qs:
         print(C.h1(name))
         if q:
             print(C.p('{}: {}'.format(
-                C.t('Highlighted for query'), q)))
+                C.t('Highlighted for query'), q), cl="header"))
 
     else:
         # TODO this may be too harsh; even if we don't have metadata, we might

@@ -39,7 +39,7 @@ if 'q' in qs:
     C.print_header(title = q + ' - ' + C.t('CLIR results') )
     print(C.h1(C.t('Results for query') + ' <em>' + q + '</em>'))
     results = C.get_results(q)    
-    print(C.p(C.t('Number of results found') + ': ' + str(results.numFound)))
+    print(C.p(C.t('Number of results found') + ': ' + str(results.numFound), cl="header"))
     print('<hr>')
     C.show_results(results)
     #results.debugprint()

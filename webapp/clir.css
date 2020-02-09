@@ -9,7 +9,15 @@ body, html {
     margin: 10px 2em 10px 10px;
 }
 
-h1 {padding-top: 1em}
+h1 {
+    padding-top: 0.9em;
+    margin-bottom: 0px;
+}
+
+p.header {
+    margin-top: 0.5ex;
+    margin-bottom: 0px;
+}
 
 .result {
     /*border: 1px dotted black;*/
@@ -64,15 +72,19 @@ hr {clear: both}
 .paratable {
     width: 100%;
     /*background-color: #dff4ff;*/
+    table-layout:fixed;
 }
 
 /*
 .paratable .left {
     width: 50%;
+    max-width: 50%;
+    overflow: hidden;
 }
 
 .paratable .right {
     width: 50%;
+    overflow: hidden;
 }
 */
 
@@ -97,6 +109,7 @@ hr {clear: both}
     border-bottom: 1px dotted #dff4ff;
     padding-right: 5px;
     text-align: justify;
+    word-wrap: break-word;
 }
 
 .highlight {
