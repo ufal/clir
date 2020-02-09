@@ -207,4 +207,18 @@ možnosti:
 * takže stejně chci nechat vybrat jazyk, a jestli bude vyhledávadlo jedno
   nmebo jich bude několik už je vedlejší, ale spíš několik
 
+* _default nemá extractor
+* sample_techproducts_configs má extractor
+* víc tomu nerozumim :-?
+
+
+* jeden solr pro všechno, 4 nodes 8971 ... 8974
+* kolekce eurosaiall
+* http://sol2:8971/solr 
+
+    bin/solr create -p 8971 -c eurosaiall -d sample_techproducts_configs -s 4 -rf 4
+    bin/post -p 8971 -c eurosaiall ../data/data_cs/source_fr/nku_be/2020/*txt
+    bin/post -p 8971 -c eurosaiall ../data/data_cs/source_fr/nku_be/????/*txt
+
+
 

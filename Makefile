@@ -82,6 +82,7 @@ belgium-txt-calibre:
 		for f in $$y/*.pdf; do ebook-convert $$f $${f/.pdf/.txt}; done; done > calibre-conversion.log
 
 belgium-metadata:
-	cd $(NKU_BE); for y in `seq 1997 2020`; do \
+	# cd $(NKU_BE); for y in `seq 1998 2020`; do
+	cd $(NKU_BE); for y in `seq 1998 2018`; do \
 	../../../../metadata.sh $$y; done
 
