@@ -26,10 +26,11 @@ if 'docid' in qs:
         name = document.getname(lang)
         C.print_header(title = name, nobody=True)
 
-        print('''<frameset rows="120, *, 35">
-            <frame src="viewdoc_header.py?''' + qstring + '''">
-            <frame src="viewdoc_main.py?''' + qstring + '''">
-            <frame src="viewdoc_footer.py">
+        pdf_url = document.get_source_pdf(C.URLPREFIX)
+
+        print('''<frameset cols="50%, *">
+            <frame src="viewdoc_txt.py?''' + qstring + '''">
+            <frame src="''' + pdf_url + '''">
         </frameset></html>''')
 
     else:

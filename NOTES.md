@@ -198,4 +198,13 @@ nku_be: data 2016-2020 (ostatní později) French English Czech German
 
 
 
+možnosti:
+* buď pro každej jazyk samostatnej solr
+* anebo jeden prostě kde je všechno na jedný hromadě -- to má jednodušší
+  interface
+  * napovědět, které jazyky podporujeme, vlaječkama na vstupní stránce
+  * ale pak nevim jak prezentovat výsledky
+* takže stejně chci nechat vybrat jazyk, a jestli bude vyhledávadlo jedno
+  nmebo jich bude několik už je vedlejší, ale spíš několik
+
 

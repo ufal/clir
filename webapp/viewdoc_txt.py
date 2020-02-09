@@ -25,13 +25,9 @@ if 'docid' in qs:
     if document.metadata:
         name = document.getname(lang)
         C.print_header(title = name, nobody=True)
-
-        print('''<frameset rows="120, *, 35">
-            <frame src="viewdoc_header.py?''' + qstring + '''">
-            <frame src="viewdoc_main.py?''' + qstring + '''">
-            <frame src="viewdoc_footer.py">
-        </frameset></html>''')
-
+        print('<body>')
+        document.show_parallel(C)
+        print('</body></html>')
     else:
         # TODO this may be too harsh; even if we don't have metadata, we might
         # still have the document; but let's ignore that for now

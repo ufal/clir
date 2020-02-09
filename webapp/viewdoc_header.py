@@ -8,8 +8,7 @@ from clir_functions import CLIR, Document
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-qstring = os.environ['QUERY_STRING'] if 'QUERY_STRING' in os.environ else ''
-qs = parse_qs(qstring)
+qs = parse_qs(os.environ['QUERY_STRING']) if 'QUERY_STRING' in os.environ else {}
 
 if 'lang' in qs:
     lang = qs['lang'][0]
@@ -20,25 +19,25 @@ C = CLIR(language = lang, url = 'http://sol2:8989/solr/techproducts/select')
 
 if 'docid' in qs:
     docid = qs['docid'][0]
+    q = qs['q'][0] if 'q' in qs else None
     document = Document(docid)
 
     if document.metadata:
         name = document.getname(lang)
-        C.print_header(title = name, nobody=True)
-
-        print('''<frameset rows="120, *, 35">
-            <frame src="viewdoc_header.py?''' + qstring + '''">
-            <frame src="viewdoc_main.py?''' + qstring + '''">
-            <frame src="viewdoc_footer.py">
-        </frameset></html>''')
+        C.print_header(title = name)
+        print(C.h1(name))
+        if q:
+            print(C.p('{}: {}'.format(
+                C.t('Highlighted for query'), q)))
 
     else:
         # TODO this may be too harsh; even if we don't have metadata, we might
         # still have the document; but let's ignore that for now
         C.print_header(title = C.t('CLIR: cannot display document'))
         print(C.h1(C.t('CLIR: cannot display document')))
-        C.print_footer()
 else:
     C.print_header(title = C.t('CLIR: no document was specified'))
     print(C.h1(C.t('CLIR: no document was specified')))
-    C.print_footer()
+
+print('</body></html>')
+

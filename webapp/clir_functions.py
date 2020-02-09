@@ -3,6 +3,7 @@
 
 import requests
 import json
+from clir_texts import CLIRtexts
 
 class Results:
     def __init__(self, response):
@@ -103,7 +104,18 @@ class Document:
         elif self.info:
             name = self.info['filename']
         return name
-        
+
+    # use C.URLPREFIX to get http url
+    def get_source_txt(self, urlprefix = ''):
+        return urlprefix + self.info['srcdir'] + '/' + self.info['filename'] + '.txt'
+    
+    def get_source_pdf(self, urlprefix = ''):
+        return urlprefix + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
+
+    def show_parallel(self, C):
+        print('<table style="width: 100%">')
+        print('<tr><td>Translation</td><td>Original</td></tr>')
+        print('</table>')
 
 class Result:
     def __init__(self, doc, doc_hl):
@@ -137,9 +149,35 @@ class Result:
 
     def show(self, C):
         print('<div class="result" id="' + self.docid + '">')
+        
+        if self.info:
+            # year and SAI
+            info_sai_year = '{}, {}'.format(
+                C.t('nku_' + self.info['nku']),
+                str(self.info['year'])
+                )
+        
+            # language and pages and words
+            if self.metadata:
+                info_lang_p_w = '{}, {} {}, {} {}'.format(
+                    C.t(self.info['src']),
+                    self.metadata['pages'],
+                    C.t('page' + Result.pluralsuffix(self.metadata['pages'])),
+                    self.metadata['words'],
+                    C.t('word' + Result.pluralsuffix(self.metadata['words'])),
+                    )
+            else:
+                info_lang_p_w = C.t(self.info['src'])
+            
+            print(C.details(
+                C.div(info_sai_year) + 
+                C.div(info_lang_p_w)
+                ))
+                
         # document name
         name = self.document.getname(C.language)
         print(C.h2(name))
+        
         # search results highlight
         if self.hl:
             print(C.hl(self.hl))
@@ -148,73 +186,45 @@ class Result:
                 print(C.p(self.content))
             else:
                 print(C.p(self.content[:C.LIMIT] + '...'))
+        
         # document info
         if self.info:
             print('<div>')
-            
-            previewurl = 'viewdoc.py?lang={}&amp;docid={}'.format(
-                    C.language, self.info['datapath'])
+        
+            # Preview link
+            previewurl = 'viewdoc.py?lang={}&amp;docid={}&amp;q={}'.format(
+                    C.language, self.info['datapath'], C.searchquery)
             print(C.a(previewurl, C.t('Preview')))
 
-            # language and pages and words
-            print('&nbsp;&nbsp;&nbsp;')
-            if self.metadata:
-                print('{}, {} {}, {} {}'.format(
-                    C.t(self.info['src']),
-                    self.metadata['pages'],
-                    C.t('page' + Result.pluralsuffix(self.metadata['pages'])),
-                    self.metadata['words'],
-                    C.t('word' + Result.pluralsuffix(self.metadata['words'])),
-                    ))
-            else:
-                print(C.t(self.info['src']))
-                
-            # translated file
-            #trtxt = C.URLPREFIX + self.info['datapath']
-            #print(C.a(trtxt, C.t('Translation preview')))
-            #print(' ({})'.format(C.t(self.info['lang'])))
-            #print('&nbsp;&nbsp;&nbsp;')
-            
-            # original file
-            #srcpdf = C.URLPREFIX + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
-            #print(C.a(srcpdf, C.t('Original document')))
-            #print(' ({})'.format(C.t(self.info['src'])))
-            # TODO pages words
-            #print('&nbsp;&nbsp;&nbsp;')
-            
-            # year and SAI
-            print('&nbsp;&nbsp;&nbsp;')
-            print('{}: {}, {}'.format(
-                C.t('Source'),
-                C.t('nku_' + self.info['nku']),
-                str(self.info['year'])
-                ))
-            
             # original name
             origname = self.document.getname(self.document.info['src'])
             if origname != name:
-                print('&nbsp;&nbsp;&nbsp;')
-                print('{}: {}'.format(
-                    C.t('Original name'),
-                    origname))
+                print(C.span(
+                        '{}: {}'.format(
+                        C.t('Original name'),
+                        origname),
+                    cl='origname'))
 
             print('</div>')
-        print('</div>')
+        
+        print('</div>')  # end result box
 
+
+        
 class CLIR:
-    def __init__(self, language, url):
+    def __init__(self, language = 'en', url = 'http://sol2:8989/solr/techproducts/select'):
         self.language = language
         self.url = url
         self.LIMIT = 200
         self.URLPREFIX = 'http://ufallab.ms.mff.cuni.cz/~rosa/elitr/'
 
     def t(self, text):
-        if text in CLIR.texts and self.language in CLIR.texts[text]:
-            return CLIR.texts[text][self.language]
+        if text in CLIRtexts.texts and self.language in CLIRtexts.texts[text]:
+            return CLIRtexts.texts[text][self.language]
         else:
             return text
 
-    def print_header(self, title='CLIR'):
+    def print_header(self, title='CLIR', nobody=False):
         print('''Content-Type: text/html;charset=utf-8
 
         <html>
@@ -222,12 +232,26 @@ class CLIR:
             <title>''' + title + '''</title>
             <link rel="stylesheet" type="text/css" href="http://ufallab.ms.mff.cuni.cz/~rosa/elitr/clir.css">
         </head>
-
-        <body>
         ''')
 
-    def print_footer(self):
+        if not nobody:
+            print('''
+            <body>
+            <img class="logo"
+            src="http://ufallab.ms.mff.cuni.cz/~rosa/elitr/logo_ufal_110u.png"
+            alt="Logo ÚFAL" title="Institute of Formal and Applied Linguistics">
+            ''')
+
+    def print_footer(self, nohr=False):
+        if not nohr:
+            print('<hr class="bottomrule">')
         print('''
+        <div>
+        © 2020 Institute of Formal and Applied Linguistics,
+        Faculty of Mathematics and Physics,
+        Charles University,
+        Prague, Czechia
+        </div>
         </body>        
         </html>        
         ''')
@@ -252,14 +276,20 @@ class CLIR:
     def p(self, text):
         return self.tag('p', text)
 
-    def div(self, text):
-        return self.tag('div', text)
+    def div(self, text, cl=None):
+        return self.tag('div', text, cl)
+
+    def span(self, text, cl=None):
+        return self.tag('span', text, cl)
 
     def hl(self, text):
         return self.tag('div', text, 'hl')
 
     def details(self, text):
         return self.tag('div', text, 'details')
+
+    def source(self, text):
+        return self.tag('div', text, 'source')
 
     def get_results(self, q):
         data = {'q': q,
@@ -274,128 +304,3 @@ class CLIR:
     def show_results(self, results):
         for result in results.results:
             result.show(self)
-
-
-
-    # localization
-    texts = {
-            'CLIR results': {
-                'cs': 'výsledky CLIR',
-                },
-            'Results for query': {
-                'cs': 'Výsledky pro dotaz',
-                },
-            'Number of results found': {
-                'cs': 'Počet nalezených výsledků',
-                },
-            'CLIR: no query was specified': {
-                'cs': 'CLIR: nebyl zadán žádný dotaz',
-                },
-            'CLIR: no document was specified': {
-                'cs': 'CLIR: nebyl zadán žádný dokument',
-                },
-            'CLIR: cannot display document': {
-                'cs': 'CLIR: dokument nelze zobrazit',
-                },
-            'Translation preview': {
-                'cs': 'Náhled překladu',
-                },
-            'Original document': {
-                'cs': 'Původní dokument',
-                },
-            'nku_be': {
-                'cs': 'belgická SAI (Cour des comptes)',
-                'de': 'belgische SAI (Cour des comptes)',
-                'en': 'Belgian SAI (Cour des comptes)',
-                'fr': 'SAI belge (Cour des comptes)',
-                },
-            'nku_cs': {
-                'cs': 'česká SAI (Nejvyšší kontrolní úřad)',
-                'de': 'tschechische SAI (Nejvyšší kontrolní úřad)',
-                'en': 'Czech SAI (Nejvyšší kontrolní úřad)',
-                'fr': 'SAI tchèque (Nejvyšší kontrolní úřad)',
-                },
-            'nku_de': {
-                'cs': 'německá SAI (Bundesrechnungshof)',
-                'de': 'deutsche SAI (Bundesrechnungshof)',
-                'en': 'German SAI (Bundesrechnungshof)',
-                'fr': 'SAI allemand (Bundesrechnungshof)',
-                },
-            'nku_fr': {
-                'cs': 'francouzská SAI (Cour des Comptes)',
-                'de': 'französische SAI (Cour des Comptes)',
-                'en': 'French SAI (Cour des Comptes)',
-                'fr': 'SAI française (Cour des Comptes)',
-                },
-            'nku_ch': {
-                'cs': 'švýcarská SAI (Eidgenössische Finanzkontrolle)',
-                'de': 'schweizerische SAI (Eidgenössische Finanzkontrolle)',
-                'en': 'Swiss SAI (Eidgenössische Finanzkontrolle)',
-                'fr': 'SAI suisse (Eidgenössische Finanzkontrolle)',
-                },
-            'nku_ir': {
-                'cs': 'irská SAI (Office of the Comptroller and Auditor General)',
-                'de': 'irlansische SAI (Office of the Comptroller and Auditor General)',
-                'en': 'Irish SAI (Office of the Comptroller and Auditor General)',
-                'fr': 'SAI irlande (Office of the Comptroller and Auditor General)',
-                },
-            'nku_ru': {
-                'cs': 'ruská SAI (Accounts Chamber of Russian Federation)',
-                'de': 'russische SAI (Accounts Chamber of Russian Federation)',
-                'en': 'Russian SAI (Accounts Chamber of Russian Federation)',
-                'fr': 'SAI russe (Accounts Chamber of Russian Federation)',
-                },
-            'nku_uk': {
-                'cs': 'britská SAI (National Audit Office)',
-                'de': 'britische SAI (National Audit Office)',
-                'en': 'British SAI (National Audit Office)',
-                'fr': 'SAI britannique (National Audit Office)',
-                },
-            'cs': {
-                'cs': 'česky',
-                'de': 'tschechisch',
-                'en': 'Czech',
-                'fr': 'tchèque',
-                },
-            'de': {
-                'cs': 'německy',
-                'de': 'deutsch',
-                'en': 'German',
-                'fr': 'allemand',
-                },
-            'en': {
-                'cs': 'anglicky',
-                'de': 'englisch',
-                'en': 'English',
-                'fr': 'anglais',
-                },
-            'fr': {
-                'cs': 'francouzsky',
-                'de': 'französisch',
-                'en': 'French',
-                'fr': 'français',
-                },
-            'ru': {
-                'cs': 'rusky',
-                'de': 'russisch',
-                'en': 'Russian',
-                'fr': 'SAI russe',
-                },
-            'Source': {'cs': 'Zdroj',},
-            'pages': {'cs': 'stránek',},
-            'words': {'cs': 'slov',},
-            'page': {'cs': 'stránka',},
-            'word': {'cs': 'slovo',},
-            'pages2': {'cs': 'stránky', 'en': 'pages'},
-            'words2': {'cs': 'slova', 'en': 'words'},
-            'Original name': {'cs': 'Původní název',},
-            'Preview': {'cs': 'Náhled',},
-            '': {'cs': '',},
-            '': {'cs': '',},
-            '': {'cs': '',},
-            '': {'cs': '',},
-            '': {'cs': '',},
-            
-            
-            }
-

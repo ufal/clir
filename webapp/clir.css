@@ -1,25 +1,33 @@
 body, html {
     font-family: sans-serif;
     font-size: small;
-    background-color: #ccc;
+    background-color: #a0d3ed;
 }
+
+.logo {
+    float: left;
+    margin: 10px 2em 10px 10px;
+}
+
+h1 {padding-top: 1em}
+
 .result {
-    border: 1px solid black;
-    margin: 1ex 1ex 1ex 1ex;
-    padding: 1ex 1ex 1ex 1ex;
-    border-radius: 10px;
-    background-color: #ccf
+    /*border: 1px dotted black;*/
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    margin: 2ex 5ex 1ex 1ex;
+    padding: 1.5ex 1ex 1ex 2ex;
+    /*border-radius: 10px;*/
+    border-radius: 5px;
+    background-color: #dff4ff;
 }
 .result h2 {
     font-size: large;
     margin: 0 0 0 0;
 }
 .result .hl {
-    padding: 2px 0 5px 0;
-    color: #333;
-}
-.result .details {
-    color: #333;
+    padding: 1ex 0 1ex 0;
+    color: #111;
 }
 .result .hl::before, .result .hl::after {
     content: "...";
@@ -27,4 +35,17 @@ body, html {
 .result .hl em {
     font-weight: bold;
 }
+.result .details {
+    float: right;
+}
+.result .details div {
+    margin-bottom: 0.5ex;
+}
+.result .origname {
+    margin-left: 3ex;
+    color: #555;
+}
+
+hr {clear: both}
+
 
