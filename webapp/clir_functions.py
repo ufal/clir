@@ -5,6 +5,12 @@ import requests
 import json
 from clir_texts import CLIRtexts
 
+import logging
+#logging.basicConfig(
+#    format='%(asctime)s %(message)s',
+#    datefmt='%Y-%m-%d %H:%M:%S',
+#    level=logging.INFO)
+
 class Results:
     def __init__(self, response):
         self.response = response
@@ -47,7 +53,7 @@ class Document:
         
         datapath = docid[prefix:]
         parts = datapath[1:].split('/', 6)
-        assert len(parts) == 6
+        assert len(parts) == 6, parts
         
         # data
         assert parts[0] == 'data'
@@ -70,6 +76,7 @@ class Document:
         
         info['datapath'] = datapath
         info['srcdir'] = '/'.join([
+            '',
             'data',
             'data_' + info['src'],
             'source_' + info['src'],
@@ -86,11 +93,12 @@ class Document:
     def _get_metadata(info):
         metadata = {}
         try:
-            metafilename = info['srcdir'] + '/' + info['filename'] + '.meta'
+            metafilename = '.' + info['srcdir'] + '/' + info['filename'] + '.meta'
             with open(metafilename) as metafile:
                 metadata = json.load(metafile)
                 return metadata
         except:
+            logging.warn('Cannot open {}'.format(metafilename))
             return None
 
     def getname(self, lang='en'):
@@ -113,8 +121,12 @@ class Document:
         return urlprefix + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
 
     def show_parallel(self, C):
+        trfilename  = '.' + self.info['datapath']
+        srcfilename = '.' + self.get_source_txt()
+        
+        
         print('<table style="width: 100%">')
-        print('<tr><td>Translation</td><td>Original</td></tr>')
+        print('<tr><th>Translation</th><th>Original</th></tr>')
         print('</table>')
 
 class Result:
@@ -212,9 +224,19 @@ class Result:
 
         
 class CLIR:
-    def __init__(self, language = 'en', url = 'http://sol2:8989/solr/techproducts/select'):
+    def __init__(self,
+            language = 'en', url = None,
+            host = 'sol2', port = '8971', collection = 'eurosaiall'
+            ):
         self.language = language
-        self.url = url
+        if url:
+            self.url = url
+        else:
+            self.url = 'http://{}:{}/solr/{}/select'.format(
+            host, port, collection)
+        self.host = host
+        self.port = port
+        self.collection = collection
         self.LIMIT = 200
         self.URLPREFIX = 'http://ufallab.ms.mff.cuni.cz/~rosa/elitr/'
 
@@ -255,6 +277,24 @@ class CLIR:
         </body>        
         </html>        
         ''')
+
+    def print_searchform(self):
+        print('''<form action="results.py">
+                {}: <input name="q" value="foundation"><br>
+                <input type="hidden" name="lang" value="{}">
+                <input type="hidden" name="host" value="{}">
+                <input type="hidden" name="port" value="{}">
+                <input type="hidden" name="collection" value="{}">
+                <input type="submit" value="{}">
+            </form>'''.format(
+                self.t('Search query'),
+                self.language,
+                self.host, self.port, self.collection,
+                self.t('Search'),
+                ))
+
+
+
 
     def tag(self, tag, text, cl=None):
         if cl:
