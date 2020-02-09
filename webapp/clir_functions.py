@@ -4,6 +4,7 @@
 import requests
 import json
 from clir_texts import CLIRtexts
+import sys
 
 import logging
 #logging.basicConfig(
@@ -123,11 +124,26 @@ class Document:
     def show_parallel(self, C):
         trfilename  = '.' + self.info['datapath']
         srcfilename = '.' + self.get_source_txt()
-        
-        
-        print('<table style="width: 100%">')
-        print('<tr><th>Translation</th><th>Original</th></tr>')
-        print('</table>')
+        try:
+            with open(trfilename, encoding='utf8') as trfile, open(srcfilename, encoding='utf8') as srcfile:
+                print('<table class="paratable">')
+                print('''<thead>
+                    <tr>
+                    <th class="left">{}</th>
+                    <th class="right">{}</th>
+                    </tr>
+                    </thead>'''.format(
+                    C.t('Translation'), C.t('Original')))
+                print('<tbody>')
+                for trline, srcline in zip(trfile, srcfile):
+                    if trline != '\n' and srcline != '\n':
+                        print('<tr><td>{}</td><td>{}</td></tr>'.format(
+                            trline, srcline))
+                print('</tbody>')
+                print('</table>')
+        except:
+            logging.error(sys.exc_info()[0])
+            print(C.p(C.t('Error ocurred while opening the document.')))
 
 class Result:
     def __init__(self, doc, doc_hl):
@@ -137,7 +153,7 @@ class Result:
         else:
             self.content = str(doc)
         if 'content' in doc_hl:
-            self.hl = doc_hl['content'][0]
+            self.hl = doc_hl['content'][0].strip()
         else:
             self.hl = None
         self.docid = doc['id']
@@ -185,10 +201,20 @@ class Result:
                 C.div(info_sai_year) + 
                 C.div(info_lang_p_w)
                 ))
+            
+            # Preview link
+            previewurl = 'viewdoc.py?lang={}&amp;docid={}&amp;q={}'.format(
+                    C.language, self.info['datapath'], C.searchquery)
+            
+            # Original name
+            origname = self.document.getname(self.document.info['src'])
                 
         # document name
         name = self.document.getname(C.language)
-        print(C.h2(name))
+        if previewurl:
+            print(C.h2(C.a(previewurl, name)))
+        else:
+            print(C.h2(name))
         
         # search results highlight
         if self.hl:
@@ -202,21 +228,14 @@ class Result:
         # document info
         if self.info:
             print('<div>')
-        
-            # Preview link
-            previewurl = 'viewdoc.py?lang={}&amp;docid={}&amp;q={}'.format(
-                    C.language, self.info['datapath'], C.searchquery)
-            print(C.a(previewurl, C.t('Preview')))
-
+            # print(C.a(previewurl, C.t('Preview')))
             # original name
-            origname = self.document.getname(self.document.info['src'])
             if origname != name:
                 print(C.span(
                         '{}: {}'.format(
                         C.t('Original name'),
                         origname),
                     cl='origname'))
-
             print('</div>')
         
         print('</div>')  # end result box
@@ -323,6 +342,7 @@ class CLIR:
         return self.tag('span', text, cl)
 
     def hl(self, text):
+        #return self.tag('div', self.tag('q', text), 'hl')
         return self.tag('div', text, 'hl')
 
     def details(self, text):

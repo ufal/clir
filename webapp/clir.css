@@ -16,36 +16,87 @@ h1 {padding-top: 1em}
     border-top: 1px solid black;
     border-left: 1px solid black;
     margin: 2ex 5ex 1ex 1ex;
-    padding: 1.5ex 1ex 1ex 2ex;
+    padding: 1ex 1ex 0.25ex 2ex;
     /*border-radius: 10px;*/
     border-radius: 5px;
     background-color: #dff4ff;
 }
 .result h2 {
-    font-size: large;
+    font-size: medium;
     margin: 0 0 0 0;
 }
-.result .hl {
-    padding: 1ex 0 1ex 0;
-    color: #111;
+.result h2 a {
+    text-decoration: none;
 }
-.result .hl::before, .result .hl::after {
-    content: "...";
+.result h2 a:hover, .result h2 a:active  {
+    text-decoration: underline;
+}
+.result .hl {
+    padding: 0.5ex 0 0.5ex 0;
+    /*color: #111;*/
+    font-size: medium;
+    font-family: serif;
+    margin-left: 3ex;
+}
+.result .hl::before {
+    content: '"...';
+}
+.result .hl::after {
+    content: '..."';
 }
 .result .hl em {
     font-weight: bold;
 }
 .result .details {
     float: right;
+    color: #555;
 }
 .result .details div {
     margin-bottom: 0.5ex;
 }
 .result .origname {
-    margin-left: 3ex;
+    /*margin-left: 3ex;*/
     color: #555;
 }
 
 hr {clear: both}
+
+.paratable {
+    width: 100%;
+    /*background-color: #dff4ff;*/
+}
+
+/*
+.paratable .left {
+    width: 50%;
+}
+
+.paratable .right {
+    width: 50%;
+}
+*/
+
+/*
+.paratable * {
+    border: none;
+    border-spacing: 0;
+    border-collapse: collapse;
+    padding: 0;
+    margin: 0;
+}
+*/
+
+.paratable th {
+    background-color: #dff4ff;
+}
+
+.paratable td {
+    font-size: 90%;
+    font-family: serif;
+    vertical-align: top;
+    border-bottom: 1px dotted #dff4ff;
+    padding-right: 5px;
+    text-align: justify;
+}
 
 
