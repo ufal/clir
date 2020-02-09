@@ -226,11 +226,23 @@ možnosti:
 * Familienzusammenführung
 * regroupement familial
 
+TODO: připravit tasky
+
+
+DONE: viewdoc i bez metadat
+
+
 TODO: stránkování výsledků (anebo rovnou zobrazovat všechny)
 
 TODO: návrty na předchozí stránky
 
 TODO: rozdělit podle jazyka vyhledávání
+- ideálně přidat nějakej parametr do vyhledávání na to
 
+TODO: metadata cs
+
+TODO: vstupní stránky
+
+TODO: highligh case insensitive
 
 

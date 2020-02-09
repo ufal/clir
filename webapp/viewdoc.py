@@ -22,7 +22,7 @@ if 'docid' in qs:
     docid = qs['docid'][0]
     document = Document(docid)
 
-    if document.metadata:
+    if document.info:
         name = document.getname(lang)
         C.print_header(title = name, nobody=True)
 
@@ -33,7 +33,7 @@ if 'docid' in qs:
         </frameset></html>''')
 
     else:
-        # TODO this may be too harsh; even if we don't have metadata, we might
+        # TODO this may be too harsh; even if we don't have info, we might
         # still have the document; but let's ignore that for now
         C.print_header(title = C.t('CLIR: cannot display document'))
         print(C.h1(C.t('CLIR: cannot display document')))

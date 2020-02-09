@@ -27,7 +27,7 @@ if 'docid' in qs:
     docid = qs['docid'][0]
     document = Document(docid)
 
-    if document.metadata:
+    if document.info:
         name = document.getname(lang)
         C.print_header(title = name, nobody=True)
         print('<body>')
