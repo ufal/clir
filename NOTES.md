@@ -230,6 +230,7 @@ TODO: připravit tasky
 
 
 DONE: viewdoc i bez metadat
+DONE: highligh case insensitive
 
 
 TODO: stránkování výsledků (anebo rovnou zobrazovat všechny)
@@ -243,7 +244,6 @@ TODO: metadata cs
 
 TODO: vstupní stránky
 
-TODO: highligh case insensitive
 
 
 ## solr search

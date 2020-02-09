@@ -3,6 +3,7 @@
 
 import requests
 import json
+import re
 from clir_texts import CLIRtexts
 import sys
 lstripchars = '!"“#$%&\'’)*+,-–./:;=?@[\\]^_`{|}~ \t\n\r\x0b\x0c'
@@ -194,16 +195,19 @@ class Result:
                 )
         
             # language and pages and words
-            if self.metadata:
-                info_lang_p_w = '{}, {} {}, {} {}'.format(
-                    C.t(self.info['src']),
+            info_lang_p_w = C.t(self.info['src'])
+            if self.metadata and 'pages' in self.metadata:
+                info_lang_p_w = '{}, {} {}'.format(
+                    info_lang_p_w,
                     self.metadata['pages'],
                     C.t('page' + Result.pluralsuffix(self.metadata['pages'])),
+                )
+            if self.metadata and 'words' in self.metadata:
+                info_lang_p_w = '{}, {:,} {}'.format(
+                    info_lang_p_w,
                     self.metadata['words'],
                     C.t('word' + Result.pluralsuffix(self.metadata['words'])),
-                    )
-            else:
-                info_lang_p_w = C.t(self.info['src'])
+                )
             
             print(C.details(
                 C.div(info_sai_year) + 
@@ -288,10 +292,11 @@ class CLIR:
         else:
             return text
 
-    # TODO should be more clever, at least lc
     def highlight(self, text, words):
-        for word in words:
-            text = text.replace(word, self.tag('span', word, 'highlight'))
+        search = '(' + '|'.join([re.escape(word) for word in words]) + ')'
+        replace = self.tag('span', r'\1', 'highlight')
+        regex = re.compile(search, re.IGNORECASE)
+        text = regex.sub(replace, text)
         return text
     
     def print_header(self, title='CLIR', nobody=False):
