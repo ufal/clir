@@ -13,7 +13,9 @@ solr-start:
 	cd $(SOLR); z=''; \
 	for n in 1 2 3 4; do \
 		mkdir -p $C/node$$n/solr; \
-		bin/solr start -cloud -p 897$$n -s $C/node$$n/solr $$z; \
+		cp server/solr/solr.xml $C/node$$n/solr/; \
+		cp server/solr/zoo.cfg $C/node$$n/solr/; \
+		bin/solr start -V -cloud -p 897$$n -s $C/node$$n/solr $$z; \
 		z='-z localhost:9971'; \
 	done;
 
