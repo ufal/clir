@@ -4,6 +4,45 @@ solr-8.4.1:
 	wget http://apache.miloslavbrada.cz/lucene/solr/8.4.1/$@.tgz
 	tar -zxvf $@.tgz
 
+SOLR=solr-8.4.1
+
+# 4 solr nodes on ports 8971 8972 8973 8974,
+# first node with embedded zookeper at port 9971
+solr-start:
+	cd $(SOLR); \
+	for n in 1 2 3 4; do mkdir -p  cloud/node$$n/solr; done; \
+	bin/solr start -cloud -p 8971 -s cloud/node1/solr; \
+	bin/solr start -cloud -p 8972 -s cloud/node2/solr -z localhost:9971; \
+	bin/solr start -cloud -p 8973 -s cloud/node3/solr -z localhost:9971; \
+	bin/solr start -cloud -p 8974 -s cloud/node4/solr -z localhost:9971;
+
+solr-create:
+	cd $(SOLR); \
+    bin/solr create -p 8971 -c eurosaiall -d sample_techproducts_configs -s 4 -rf 4
+
+solr-post:
+	cd $(SOLR); \
+	bin/post -p 8971 -c eurosaiall .../data/data_??/source_??/nku_??/????/*txt
+
+solr-status:
+	cd $(SOLR); \
+	bin/solr status
+
+solr-stop:
+	cd $(SOLR); \
+	bin/solr stop -all
+
+# restart = stop and start
+
+# bin/solr delete -c eurosaiall
+
+venv:
+	cd webapp; python3 -m venv venv
+
+wgetdata:
+	wget http://ufallab.ms.mff.cuni.cz/~rosa/elitr/data.tar.gz
+	tar -zxvf data.tar.gz
+
 ebook-convert:
 	sudo -v && wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
 
