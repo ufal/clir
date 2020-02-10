@@ -187,67 +187,102 @@ class Result:
             suffix = 's2'
         return suffix
 
-    def show(self, C):
-        print('<div class="result" id="' + self.docid + '">')
-        
+    # year and SAI
+    def info_sai_year(self, C):
+        result = ''
         if self.info:
-            # year and SAI
-            info_sai_year = '{}, {}'.format(
+            result = '{}, {}'.format(
                 C.t('nku_' + self.info['nku']),
                 str(self.info['year'])
                 )
-        
-            # language and pages and words
-            info_lang_p_w = C.t(self.info['src'])
+        return result
+
+    # language and pages and words
+    def info_lang_p_w(self, C):
+        result = ''
+        if self.info:
+            result = C.t(self.info['src'])
             if self.metadata and 'pages' in self.metadata:
-                info_lang_p_w = '{}, {} {}'.format(
-                    info_lang_p_w,
+                result = '{}, {} {}'.format(
+                    result,
                     self.metadata['pages'],
                     C.t('page' + Result.pluralsuffix(self.metadata['pages'])),
                 )
             if self.metadata and 'words' in self.metadata:
-                info_lang_p_w = '{}, {:n} {}'.format(
-                    info_lang_p_w,
+                result = '{}, {:n} {}'.format(
+                    result,
                     self.metadata['words'],
                     C.t('word' + Result.pluralsuffix(self.metadata['words'])),
                 )
-            
-            print(C.details(
-                C.div(info_sai_year) + 
-                C.div(info_lang_p_w)
-                ))
-            
-            # Preview link
-            previewurl = 'viewdoc.py?lang={}&amp;docid={}&amp;q={}'.format(
-                    C.language, self.info['datapath'], C.searchquery)
-            
-            # Original name
+        return result
+
+    # file ID -- not the full one, just the filename without extension
+    def info_id(self, C):
+        result = ''
+        if self.info:
+            name = self.document.getname(C.language)
+            if self.info['filename'] != name:
+                result = '{}: {}'.format(
+                            C.t('ID'),
+                            self.info['filename'])
+        return result
+
+    # Original name
+    def info_origname(self, C):
+        result = ''
+        if self.info:
+            name = self.document.getname(C.language)
             origname = self.document.getname(self.document.info['src'])
-                
-        # document name
+            if origname != name:
+                result = '{}: {}'.format(
+                    C.t('Original name'),
+                    origname)
+        return result
+
+    # Preview link
+    def info_previewurl(self, C):
+        if self.info:
+            return 'viewdoc.py?lang={}&amp;docid={}&amp;q={}'.format(
+                    C.language, self.info['datapath'], C.searchquery)
+        else:
+            return None
+
+    def show(self, C):
+        # Get data
         name = self.document.getname(C.language)
-        if previewurl:
-            print(C.h2(C.a(previewurl, name)))
+        info_sai_year   = self.info_sai_year(C)
+        info_lang_p_w   = self.info_lang_p_w(C)
+        info_id         = self.info_id(C)
+        info_origname   = self.info_origname(C)
+        info_previewurl = self.info_previewurl(C)
+        
+        # Start output
+        print('<div class="result" id="' + self.docid + '">')
+        
+        # Details box
+        print(C.div(
+            C.div(info_id, cl='id') +
+            C.div(info_sai_year, cl='source') + 
+            C.div(info_lang_p_w, cl='lang'),
+            cl='details'))
+
+        # Document name
+        if info_previewurl:
+            print(C.h2(C.a(info_previewurl, name)))
         else:
             print(C.h2(name))
-
-        # search results highlight
+            
+        # Search results highlight
         print(self.hldiv(C))
-    
-        # document info
-        if self.info:
-            print('<div>')
-            # print(C.a(previewurl, C.t('Preview')))
-            # original name
-            if origname != name:
-                print(C.span(
-                        '{}: {}'.format(
-                        C.t('Original name'),
-                        origname),
-                    cl='origname'))
-            print('</div>')
-        
-        print('</div>')  # end result box
+
+        # Original name
+        print(C.div(C.span(info_origname, 'origname')))
+
+        # Clearer
+        print(C.div('', cl='clearer'))
+
+        # End output
+        print('</div>')
 
     # search results highlight
     def hldiv(self, C):
@@ -301,6 +336,21 @@ class CLIR:
         else:
             locale.setlocale(locale.LC_ALL, lang2locale['en'])
 
+
+    def get_results(self, q):
+        data = {'q': q,
+                'hl': 'true', # highlighting
+                'hl.fl' : 'content', # what to highlight
+                'rows': 100,
+                }
+        # highlighting->id->content[0] ... <em> highlights search query
+        response = requests.get(self.url, data = data)
+        #response.encoding='utf8'
+        return Results(response)
+
+    def show_results(self, results):
+        for result in results.results:
+            result.show(self)
 
     def t(self, text):
         if text in CLIRtexts.texts and self.language in CLIRtexts.texts[text]:
@@ -362,9 +412,6 @@ class CLIR:
                 self.t('Search'),
                 ))
 
-
-
-
     def tag(self, tag, text, cl=None):
         if cl:
             return '<{} class="{}">{}</{}>'.format(tag, cl, text, tag)
@@ -377,10 +424,11 @@ class CLIR:
     def h2(self, text):
         return self.tag('h2', text)
 
-    def a(self, link, text = None):
+    def a(self, link, text = None, targetblank = False):
         if text == None:
             text = link
-        return '<a href="' + link + '" target="_blank">' + text + '</a>'
+        tb = ' target="_blank"' if targetblank else ''
+        return '<a href="{}"{}>{}</a>'.format(link, tb, text)
 
     def p(self, text, cl=None):
         return self.tag('p', text, cl)
@@ -390,24 +438,3 @@ class CLIR:
 
     def span(self, text, cl=None):
         return self.tag('span', text, cl)
-
-    def details(self, text):
-        return self.tag('div', text, 'details')
-
-    def source(self, text):
-        return self.tag('div', text, 'source')
-
-    def get_results(self, q):
-        data = {'q': q,
-                'hl': 'true', # highlighting
-                'hl.fl' : 'content', # what to highlight
-                'rows': 100,
-                }
-        # highlighting->id->content[0] ... <em> highlights search query
-        response = requests.get(self.url, data = data)
-        #response.encoding='utf8'
-        return Results(response)
-
-    def show_results(self, results):
-        for result in results.results:
-            result.show(self)

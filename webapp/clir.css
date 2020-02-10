@@ -65,6 +65,22 @@ p.header {
 .result .details div {
     margin-bottom: 0.5ex;
 }
+.result .details .id {
+    color: #888;
+}
+.result .details .source {
+    color: #444;
+}
+.result .details .lang {
+    color: #444;
+}
+
+
+/*.result .docid {
+    margin-right: 3ex;
+    color: #555;
+}*/
+
 .result .origname {
     /*margin-left: 3ex;*/
     color: #555;
@@ -118,5 +134,9 @@ hr {clear: both}
 .highlight {
     background-color: #ff0;
     padding: 0 2px 0 2px;
+}
+
+.clearer {
+    clear: both;
 }
 

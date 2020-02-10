@@ -226,16 +226,19 @@ možnosti:
 * Familienzusammenführung
 * regroupement familial
 
-TODO: připravit tasky
+DONE??: stránkování výsledků (anebo rovnou zobrazovat všechny)
+...zobrazuju 100 výsledků, což by mělo stačit
+
+DONE??: návrty na předchozí stránky
+...zrušeno `target=_blank`
 
 
 DONE: viewdoc i bez metadat
+
 DONE: highligh case insensitive
 
 
-TODO: stránkování výsledků (anebo rovnou zobrazovat všechny)
 
-TODO: návrty na předchozí stránky
 
 TODO: rozdělit podle jazyka vyhledávání
 - ideálně přidat nějakej parametr do vyhledávání na to
@@ -244,6 +247,14 @@ TODO: metadata cs
 
 TODO: vstupní stránky
 
+
+TODO: připravit tasky
+
+
+# status
+
+* nku be: 2016-2020
+* nku cs: 2019-2013 asi, bude to do 2011 až se to dopřeloži a doindexuje
 
 
 ## solr search
