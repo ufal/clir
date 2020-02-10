@@ -238,12 +238,16 @@ DONE: viewdoc i bez metadat
 DONE: highligh case insensitive
 
 
+TODO: metadata cs
+...in progress
 
 
 TODO: rozdělit podle jazyka vyhledávání
 - ideálně přidat nějakej parametr do vyhledávání na to
 
-TODO: metadata cs
+
+TODO: indexnout nově přeložená data
+
 
 TODO: vstupní stránky
 
@@ -263,6 +267,8 @@ q: query
 
 hl, hl,fl: highlighting
 
+https://lucene.apache.org/solr/guide/8_4/highlighting.html#highlighting
+
 fl=id: only return ids of documents, not whole contents (but still can return
 hightlights)
 ...this might be more efficient for large documents where I only display the
@@ -270,5 +276,6 @@ beginning anyway...
 
 rows = how many results to display
 
+fq=id:*data_cs* = filter query to only return documents where id matches *data_cs*
 
 

@@ -59,8 +59,15 @@ nku_cs:
 		d=$(NKU_CS)/20$$y; mkdir -p $$d; \
 		cp kon-zavery/K$$y*.pdf $$d; cp kon-zavery-txt/K$$y*.txt $$d; done;
 
-	
+nku_cs_list:
+	cd kon-zavery-details; for f in *.html; do \
+		n=$$(grep -o '<h2>[^<]*</h2>' $$f | sed -e 's@</*h2>@@g' | head -n 1); \
+		m=$${f%.html}; echo -e "$$m\t$$n"; \
+		done > ../$(NKU_CS)/namelist.csv
 
+nku_cs_metadata:
+	cd $(NKU_CS); for y in `seq 2018 -1 1993`; do \
+	../../../../metadata_cs.sh $$y; done
 
 wmt19-elitr-testsuite:
 	git clone git@github.com:ELITR/wmt19-elitr-testsuite.git
