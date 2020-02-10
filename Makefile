@@ -8,13 +8,14 @@ SOLR=solr-8.4.1
 
 # 4 solr nodes on ports 8971 8972 8973 8974,
 # first node with embedded zookeper at port 9971
+C=example/cloud
 solr-start:
-	cd $(SOLR); \
-	for n in 1 2 3 4; do mkdir -p  cloud/node$$n/solr; done; \
-	bin/solr start -cloud -p 8971 -s cloud/node1/solr; \
-	bin/solr start -cloud -p 8972 -s cloud/node2/solr -z localhost:9971; \
-	bin/solr start -cloud -p 8973 -s cloud/node3/solr -z localhost:9971; \
-	bin/solr start -cloud -p 8974 -s cloud/node4/solr -z localhost:9971;
+	cd $(SOLR); z=''; \
+	for n in 1 2 3 4; do \
+		mkdir -p $C/node$$n/solr; \
+		bin/solr start -cloud -p 897$$n -s $C/node$$n/solr $$z; \
+		z='-z localhost:9971'; \
+	done;
 
 solr-create:
 	cd $(SOLR); \
