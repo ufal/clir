@@ -220,6 +220,8 @@ možnosti:
     bin/post -p 8971 -c eurosaiall ../data/data_cs/source_fr/nku_be/2020/*txt
     bin/post -p 8971 -c eurosaiall ../data/data_cs/source_fr/nku_be/????/*txt
 
+    bin/post -p 8971  -host sol2 -c eurosaiall ../data/data_cs/source_cs/nku_cs/????/*txt
+
 
 * sloučení rodiny
 * family reunification
