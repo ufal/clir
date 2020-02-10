@@ -338,10 +338,12 @@ class CLIR:
 
 
     def get_results(self, q):
+        lang_filter = 'id:*/data_{}/*'.format(self.language)
         data = {'q': q,
                 'hl': 'true', # highlighting
                 'hl.fl' : 'content', # what to highlight
                 'rows': 100,
+                'fq': lang_filter,
                 }
         # highlighting->id->content[0] ... <em> highlights search query
         response = requests.get(self.url, data = data)
