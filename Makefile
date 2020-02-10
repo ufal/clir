@@ -29,6 +29,14 @@ solr-status:
 	cd $(SOLR); \
 	bin/solr status
 
+solr-ports:
+	-lsof -Pi :9971 -sTCP:LISTEN -t
+	-lsof -Pi :8971 -sTCP:LISTEN -t
+	-lsof -Pi :8972 -sTCP:LISTEN -t
+	-lsof -Pi :8973 -sTCP:LISTEN -t
+	-lsof -Pi :8974 -sTCP:LISTEN -t
+
+
 solr-stop:
 	cd $(SOLR); \
 	bin/solr stop -all
