@@ -14,6 +14,11 @@ class CLIRtexts:
                 'de': 'Resultate für die Suchanfrage',
                 'fr': 'résultats pour la requête',
                 },
+            'CLIR query': {
+                'cs': 'Dotaz CLIR',
+                'de': 'CLIR Suchanfrage',
+                'fr': 'Requête CLIR',
+                },
             'Highlighted for query': {
                 'cs': 'Zvýrazněno pro dotaz',
                 'de': 'hervorgehoben für die Suchanfrage',

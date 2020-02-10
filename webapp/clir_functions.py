@@ -401,7 +401,7 @@ class CLIR:
 
     def print_searchform(self):
         print('''<form action="results.py">
-                {}: <input name="q" value="foundation"><br>
+                {}: <input name="q" value="Praha"><br>
                 <input type="hidden" name="lang" value="{}">
                 <input type="hidden" name="host" value="{}">
                 <input type="hidden" name="port" value="{}">
