@@ -6,11 +6,35 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 print("Content-Type: text/html;charset=utf-8")
 print("")
-print("TODO Tady bude CLIR demo na Elitr Eurosai 2020 Workshop", end='<br>')
-print('<a href="input.py">Multilingvální testovací verze</a>', end='<br>')
-print('<a href="input.py?lang=cs">Multilingvální testovací verze CS</a>', end='<br>')
-print('<a href="input.py?lang=en">Multilingvální testovací verze EN</a>', end='<br>')
-print('<a href="input.py?lang=de">Multilingvální testovací verze DE</a>', end='<br>')
-print('<a href="input.py?lang=fr">Multilingvální testovací verze FR</a>', end='<br>')
-print('<a href="vstup.php">Starší testovací verze</a>', end='<br>')
+
+print('''<html>
+<head>
+    <title>CLIR demo</title>
+    <link rel="stylesheet" type="text/css" href="http://ufallab.ms.mff.cuni.cz/~rosa/elitr/clir.css">
+</head>
+<body>
+<img class="logo"
+src="http://ufallab.ms.mff.cuni.cz/~rosa/elitr/logo_ufal_110u.png"
+alt="Logo ÚFAL" title="Institute of Formal and Applied Linguistics">
+''')
+
+print("<h1>CLIR demo</h1>")
+print("<p>Eurosai 2020 LangTools Workshop</p>")
+print("<hr>")
+print('<h2><a href="input.py?lang=en">English</a> (EN)</h2>')
+print('<h2><a href="input.py?lang=de">Deutsch</a> (DE)</h2>')
+print('<h2><a href="input.py?lang=fr">Français</a> (FR)</h2>')
+print('<h2><a href="input.py?lang=cs">Česky</a> (CS)</h2>')
+
+print('''
+<hr>
+<div>
+© 2020 Institute of Formal and Applied Linguistics,
+Faculty of Mathematics and Physics,
+Charles University,
+Prague, Czechia
+</div>
+</body>        
+</html>        
+''')
 

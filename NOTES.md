@@ -231,27 +231,21 @@ možnosti:
 DONE??: stránkování výsledků (anebo rovnou zobrazovat všechny)
 ...zobrazuju 100 výsledků, což by mělo stačit
 
-DONE??: návrty na předchozí stránky
-...zrušeno `target=_blank`
-
+DONE: návrty na předchozí stránky
+...zrušeno `target=_blank` a logo vede na main page
 
 DONE: viewdoc i bez metadat
 
 DONE: highligh case insensitive
 
+DONE: metadata cs
 
-TODO: metadata cs
-...in progress
-
-
-TODO: rozdělit podle jazyka vyhledávání
+DONE: rozdělit podle jazyka vyhledávání
 - ideálně přidat nějakej parametr do vyhledávání na to
 
+DONE: indexnout nově přeložená data
 
-TODO: indexnout nově přeložená data
-
-
-TODO: vstupní stránky
+DONE: vstupní stránky
 
 
 TODO: připravit tasky

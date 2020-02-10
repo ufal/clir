@@ -380,9 +380,11 @@ class CLIR:
         if not nobody:
             print('''
             <body>
+            <a href="index.py" target="_top">
             <img class="logo"
             src="http://ufallab.ms.mff.cuni.cz/~rosa/elitr/logo_ufal_110u.png"
             alt="Logo ÚFAL" title="Institute of Formal and Applied Linguistics">
+            </a>
             ''')
 
     def print_footer(self, nohr=False):
@@ -401,13 +403,19 @@ class CLIR:
 
     def print_searchform(self):
         print('''<form action="results.py">
-                {}: <input name="q" value="Praha"><br>
+                {}: <input name="q" id="q" size="50" value="Praha">
                 <input type="hidden" name="lang" value="{}">
                 <input type="hidden" name="host" value="{}">
                 <input type="hidden" name="port" value="{}">
                 <input type="hidden" name="collection" value="{}">
                 <input type="submit" value="{}">
-            </form>'''.format(
+            </form>
+            <script>
+                q=document.getElementById("q");
+                q.focus();
+                q.select();
+            </script>
+            '''.format(
                 self.t('Search query'),
                 self.language,
                 self.host, self.port, self.collection,
