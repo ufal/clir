@@ -42,7 +42,7 @@ class CLIRtexts:
             'CLIR: cannot display document': {
                 'cs': 'CLIR: dokument nelze zobrazit',
                 'de': 'CLIR: das Dokument kann nicht gezeigt werden',
-                'fr': 'CLIR: le document ne peut pasêtre affiché',
+                'fr': 'CLIR: le document ne peut pas être affiché',
                 },
             'Translation preview': {
                 'cs': 'Náhled překladu',
