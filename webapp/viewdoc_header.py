@@ -17,7 +17,7 @@ if docid:
         name = document.getname(C.language)
         C.print_header(title = name)
         print(C.h1(name))
-        if CLIR.searchquery:
+        if C.searchquery:
             print(C.p('{}: {}'.format(
                 C.t('Highlighted for query'), C.searchquery), cl="header"))
 
