@@ -49,6 +49,9 @@ solr-stop:
 
 # bin/solr delete -c eurosaiall
 
+index.html: webapp/index.py
+	cd webapp; python3 index.py | tail -n +3 > index.html
+
 venv:
 	cd webapp; python3 -m venv venv
 
