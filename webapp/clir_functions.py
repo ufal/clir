@@ -6,7 +6,9 @@ import json
 import re
 from clir_texts import CLIRtexts
 import sys
-
+import io
+import os
+from urllib.parse import parse_qs
 import locale
 
 lstripchars = '!"“#$%&\'’)*+,-–./:;=?@[\\]^_`{|}~ \t\n\r\x0b\x0c'
@@ -120,7 +122,7 @@ class Document:
             name = self.info['filename']
         return name
 
-    # use C.URLPREFIX to get http url
+    # use C.staticurl to get http url
     def get_source_txt(self, urlprefix = ''):
         return urlprefix + self.info['srcdir'] + '/' + self.info['filename'] + '.txt'
     
@@ -128,11 +130,11 @@ class Document:
         return urlprefix + self.info['srcdir'] + '/' + self.info['filename'] + '.pdf'
 
 
-    def show_parallel(self, C, query = None):
+    def show_parallel(self, C):
         trfilename  = '.' + self.info['datapath']
         srcfilename = '.' + self.get_source_txt()
-        if query:
-            query = query.split()
+        if C.searchquery:
+            query = C.searchquery.split()
         else:
             query = []
         try:
@@ -309,44 +311,62 @@ class Result:
         
 lang2locale = {
     'cs': 'cs_CZ.UTF-8',
-#    'de': 'de_DE.UTF-8',
+    'de': 'de_DE.UTF-8',
     'en': 'en_US.UTF-8',
-#    'fr': 'fr_FR.UTF-8',
+    'fr': 'fr_FR.UTF-8',
 }
 
 class CLIR:
-    def __init__(self,
-            language = 'en', url = None,
-            host = 'sol2', port = '8971', collection = 'eurosaiall'
-            ):
+    def __init__(self, language = 'en', cfgfilename='clir.cfg'):
+        
+        # it is important that some language is set
         self.language = language
-        if url:
-            self.url = url
-        else:
-            self.url = 'http://{}:{}/solr/{}/select'.format(
-            host, port, collection)
-        self.host = host
-        self.port = port
-        self.collection = collection
-        self.LIMIT = 150
-        self.URLPREFIX = 'http://ufallab.ms.mff.cuni.cz/~rosa/elitr/'
+        
+        # load settings from config file
+        with open(cfgfilename) as cfgfile:
+            j = json.load(cfgfile)
+            self.staticurl = j['staticurl']
+            self.host = j['host']
+            self.port = j['port']
+            self.collection = j['collection']
+            self.LIMIT = j['LIMIT']
+            self.rows = j['rows']
+
+        # override settings with query string
+        self.qstring = os.environ['QUERY_STRING'] if 'QUERY_STRING' in os.environ else ''
+        self.qs = parse_qs(self.qstring)
+        self.set_from_qs()
 
         if language in lang2locale:
             locale.setlocale(locale.LC_ALL, lang2locale[language])
         else:
             locale.setlocale(locale.LC_ALL, lang2locale['en'])
 
+    def qs2p(qs, param, default=None):
+        if param in qs:
+            return qs[param][0]
+        else:
+            return default
 
-    def get_results(self, q):
+    def set_from_qs(self):
+        self.language = CLIR.qs2p(self.qs, 'lang', default = self.language)
+        self.searchquery = CLIR.qs2p(self.qs, 'q', default = None)
+        self.host = CLIR.qs2p(self.qs, 'host', default = self.host)
+        self.port = CLIR.qs2p(self.qs, 'port', default = self.port)
+        self.collection = CLIR.qs2p(self.qs, 'collection', default = self.collection)
+        self.rows = int(CLIR.qs2p(self.qs, 'rows', default = self.rows))
+
+    def get_results(self):
+        url = 'http://{}:{}/solr/{}/select'.format(
+            self.host, self.port, self.collection)
         lang_filter = 'id:*/data_{}/*'.format(self.language)
-        data = {'q': q,
+        data = {'q': self.searchquery,
                 'hl': 'true', # highlighting
                 'hl.fl' : 'content', # what to highlight
-                'rows': 100,
+                'rows': self.rows,
                 'fq': lang_filter,
                 }
-        # highlighting->id->content[0] ... <em> highlights search query
-        response = requests.get(self.url, data = data)
+        response = requests.get(self.get_url(), data = data)
         #response.encoding='utf8'
         return Results(response)
 
@@ -373,7 +393,8 @@ class CLIR:
         <html>
         <head>
             <title>''' + title + '''</title>
-            <link rel="stylesheet" type="text/css" href="http://ufallab.ms.mff.cuni.cz/~rosa/elitr/clir.css">
+            <link rel="stylesheet" type="text/css"
+            href="''' + self.staticurl + '''/static/clir.css">
         </head>
         ''')
 
@@ -382,7 +403,7 @@ class CLIR:
             <body>
             <a href="index.py" target="_top">
             <img class="logo"
-            src="http://ufallab.ms.mff.cuni.cz/~rosa/elitr/logo_ufal_110u.png"
+            src="''' + self.staticurl + '''/static/logo_ufal_110u.png"
             alt="Logo ÚFAL" title="Institute of Formal and Applied Linguistics">
             </a>
             ''')
@@ -401,13 +422,15 @@ class CLIR:
         </html>        
         ''')
 
+    #<input type="hidden" name="host" value="{}">
+    #<input type="hidden" name="port" value="{}">
+    #<input type="hidden" name="collection" value="{}">
+    #self.host, self.port, self.collection,
+    
     def print_searchform(self):
         print('''<form action="results.py">
                 {}: <input name="q" id="q" size="50" value="Praha">
                 <input type="hidden" name="lang" value="{}">
-                <input type="hidden" name="host" value="{}">
-                <input type="hidden" name="port" value="{}">
-                <input type="hidden" name="collection" value="{}">
                 <input type="submit" value="{}">
             </form>
             <script>
@@ -418,7 +441,6 @@ class CLIR:
             '''.format(
                 self.t('Search query'),
                 self.language,
-                self.host, self.port, self.collection,
                 self.t('Search'),
                 ))
 

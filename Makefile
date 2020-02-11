@@ -21,11 +21,11 @@ solr-start:
 
 solr-create:
 	cd $(SOLR); \
-    bin/solr create -p 8971 -c eurosaiall -d sample_techproducts_configs -s 4 -rf 4
+    bin/solr create -V -p 8971 -c eurosaiall -d sample_techproducts_configs -s 4 -rf 4
 
 solr-post:
 	cd $(SOLR); \
-	bin/post -p 8971 -c eurosaiall .../data/data_??/source_??/nku_??/????/*txt
+	bin/post -p 8971 -c eurosaiall ../data/data_??/source_??/nku_??/????/*txt
 
 solr-status:
 	cd $(SOLR); \
@@ -38,6 +38,8 @@ solr-ports:
 	-lsof -Pi :8973 -sTCP:LISTEN -t
 	-lsof -Pi :8974 -sTCP:LISTEN -t
 
+solr-lynx:
+	lynx http://localhost:8971/solr/
 
 solr-stop:
 	cd $(SOLR); \
