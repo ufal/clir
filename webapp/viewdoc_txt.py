@@ -14,7 +14,7 @@ if docid:
     document = Document(docid)
 
     if document.info:
-        name = document.getname(lang)
+        name = document.getname(C.language)
         C.print_header(title = name, nobody=True)
         print('<body>')
         document.show_parallel(C)

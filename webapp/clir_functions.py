@@ -366,7 +366,7 @@ class CLIR:
                 'rows': self.rows,
                 'fq': lang_filter,
                 }
-        response = requests.get(self.get_url(), data = data)
+        response = requests.get(url, data = data)
         #response.encoding='utf8'
         return Results(response)
 

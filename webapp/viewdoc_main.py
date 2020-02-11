@@ -14,7 +14,7 @@ if docid:
     document = Document(docid)
 
     if document.info:
-        name = document.getname(lang)
+        name = document.getname(C.language)
         C.print_header(title = name, nobody=True)
 
         pdf_url = document.get_source_pdf(C.staticurl)

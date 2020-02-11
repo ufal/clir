@@ -9,7 +9,6 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 C = CLIR()
 
 if C.searchquery:
-    C.searchquery = q
     C.print_header(title = C.searchquery + ' - ' + C.t('CLIR results') )
     print(C.h1(C.t('Results for query') + ' <em>' + C.searchquery + '</em>'))
     results = C.get_results()
