@@ -203,7 +203,7 @@ class Result:
     def info_lang_p_w(self, C):
         result = ''
         if self.info:
-            result = C.t(self.info['src'])
+            result = '{}: {}'.format(C.t('original'), C.t(self.info['src']))
             if self.metadata and 'pages' in self.metadata:
                 result = '{}, {} {}'.format(
                     result,

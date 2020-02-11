@@ -199,11 +199,13 @@ class CLIRtexts:
                 'de': 'Automatische Übersetzung',
                 'fr': 'Traduction automatique',
                 },
+            'original': {
+                    'cs': 'originál',
+                },
             '': {
                     'cs': '',
                     'de': '',
                     'fr': '',
-                    
                 },
             
             
