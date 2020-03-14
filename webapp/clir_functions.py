@@ -80,6 +80,7 @@ class Document:
         assert len(parts[4]) == 4 and parts[4].isdecimal()
         info['year'] = int(parts[4])
         # 2020_02_report.txt
+        # TODO something special for ascii documents
         assert parts[5].endswith('.txt')
         info['filename'] = parts[5][:-4]
         
@@ -380,6 +381,7 @@ class CLIR:
         else:
             return text
 
+    # TODO does not work well for "words in quotes" (highlights spaces)
     def highlight(self, text, words):
         search = '(' + '|'.join([re.escape(word) for word in words]) + ')'
         replace = self.tag('span', r'\1', 'highlight')
