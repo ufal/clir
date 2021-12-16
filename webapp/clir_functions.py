@@ -8,17 +8,17 @@ from clir_texts import CLIRtexts
 import sys
 import io
 import os
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, quote
 import locale
 
 lstripchars = '!"“#$%&\'’)*+,-–./:;=?@[\\]^_`{|}~ \t\n\r\x0b\x0c'
 rstripchars = '!"„#$%&\'’(*+,-–./:;=?@[\\]^_`{|}~ \t\n\r\x0b\x0c'
 
 import logging
-#logging.basicConfig(
-#    format='%(asctime)s %(message)s',
-#    datefmt='%Y-%m-%d %H:%M:%S',
-#    level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    level=logging.INFO)
 
 class Results:
     def __init__(self, response):
@@ -135,9 +135,9 @@ class Document:
         trfilename  = '.' + self.info['datapath']
         srcfilename = '.' + self.get_source_txt()
         if C.searchquery:
-            query = C.searchquery.split()
+            query = C.searchquery
         else:
-            query = []
+            query = ""
         try:
             with open(trfilename, encoding='utf8') as trfile, open(srcfilename, encoding='utf8') as srcfile:
                 print('<table class="paratable">')
@@ -246,7 +246,8 @@ class Result:
     def info_previewurl(self, C):
         if self.info:
             return 'viewdoc.py?lang={}&amp;docid={}&amp;q={}'.format(
-                    C.language, self.info['datapath'], C.searchquery)
+                    C.language, self.info['datapath'],
+                    quote(C.searchquery))
         else:
             return None
 
@@ -381,12 +382,17 @@ class CLIR:
         else:
             return text
 
-    # TODO does not work well for "words in quotes" (highlights spaces)
-    def highlight(self, text, words):
-        search = '(' + '|'.join([re.escape(word) for word in words]) + ')'
-        replace = self.tag('span', r'\1', 'highlight')
-        regex = re.compile(search, re.IGNORECASE)
-        text = regex.sub(replace, text)
+    def query2words(self, query):
+        query = re.sub(r'\W', ' ', query)
+        return query.split()
+
+    def highlight(self, text, query):
+        words = self.query2words(query)
+        if words:
+            search = r'\b(' + '|'.join([re.escape(word) for word in words]) + r')\b'
+            replace = self.tag('span', r'\1', 'highlight')
+            regex = re.compile(search, re.IGNORECASE)
+            text = regex.sub(replace, text)
         return text
     
     def print_header(self, title='CLIR', nobody=False):

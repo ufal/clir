@@ -18,8 +18,11 @@ if docid:
         C.print_header(title = name)
         print(C.h1(name))
         if C.searchquery:
-            print(C.p('{}: {}'.format(
-                C.t('Highlighted for query'), C.searchquery), cl="header"))
+            words = C.query2words(C.searchquery)
+            if words:
+                words = ' '.join(words)
+                print(C.p('{}: {}'.format(
+                    C.t('Highlighted for query'), words), cl="header"))
 
     else:
         C.print_header(title = C.t('CLIR: cannot display document'))
