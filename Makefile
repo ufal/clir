@@ -1,10 +1,10 @@
 SHELL:=/bin/bash
 
-solr-8.4.1:
-	wget http://apache.miloslavbrada.cz/lucene/solr/8.4.1/$@.tgz
+solr-8.11.1:
+	wget https://www.apache.org/dyn/closer.lua/lucene/solr/8.11.1/solr-8.11.1.tgz?action=download -O $@.tgz
 	tar -zxvf $@.tgz
 
-SOLR=solr-8.4.1
+SOLR=solr-8.11.1
 
 # 4 solr nodes on ports 8971 8972 8973 8974,
 # first node with embedded zookeper at port 9971
