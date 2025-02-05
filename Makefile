@@ -45,6 +45,15 @@ solr-stop:
 	cd $(SOLR); \
 	bin/solr stop -all
 
+apache-status:
+	sudo systemctl status apache2.service
+
+apache-start:
+	sudo systemctl start apache2.service
+
+apache-stop:
+	sudo systemctl stop apache2.service
+
 # restart = stop and start
 
 # bin/solr delete -c eurosaiall
